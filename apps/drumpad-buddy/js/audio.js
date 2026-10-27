@@ -350,6 +350,125 @@ export class AudioEngine {
         break;
       }
 
+      case 'vocal': {
+        // 11. Human Vocal Plosive & Formants ("Tah!" / Vocal Beatbox)
+        // A) Consonant burst ("T" onset transient)
+        const noiseBuffer = this.getNoiseBuffer(0.018);
+        const tNoise = this.audioCtx.createBufferSource();
+        tNoise.buffer = noiseBuffer;
+
+        const tFilter = this.audioCtx.createBiquadFilter();
+        tFilter.type = 'highpass';
+        tFilter.frequency.setValueAtTime(3600, time);
+
+        const tGain = this.audioCtx.createGain();
+        const noiseLvl = isBeatOne ? baseGain * 0.7 : (isAccent ? baseGain * 0.55 : baseGain * 0.35);
+        tGain.gain.setValueAtTime(noiseLvl, time);
+        tGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.015);
+
+        tNoise.connect(tFilter);
+        tFilter.connect(tGain);
+        tGain.connect(gainNode);
+
+        // B) Vocal Tract Glottal Source with F1 & F2 Formant Filtering ("Ah" vowel body)
+        const glottalOsc = this.audioCtx.createOscillator();
+        glottalOsc.type = 'sawtooth';
+
+        const pitch = isBeatOne ? 270 : (isAccent ? 220 : 175);
+        glottalOsc.frequency.setValueAtTime(pitch, time);
+        glottalOsc.frequency.exponentialRampToValueAtTime(pitch * 0.72, time + 0.045);
+
+        // Formant Filter F1 (750 Hz - Open pharynx / oral cavity resonance)
+        const f1Filter = this.audioCtx.createBiquadFilter();
+        f1Filter.type = 'bandpass';
+        f1Filter.frequency.setValueAtTime(isBeatOne ? 820 : 720, time);
+        f1Filter.Q.setValueAtTime(4.5, time);
+
+        // Formant Filter F2 (1350 Hz - Lingual vowel resonance)
+        const f2Filter = this.audioCtx.createBiquadFilter();
+        f2Filter.type = 'bandpass';
+        f2Filter.frequency.setValueAtTime(isBeatOne ? 1450 : 1300, time);
+        f2Filter.Q.setValueAtTime(4.0, time);
+
+        const vocalGain = this.audioCtx.createGain();
+        const voiceLvl = isBeatOne ? baseGain * 0.95 : (isAccent ? baseGain * 0.8 : baseGain * 0.5);
+        vocalGain.gain.setValueAtTime(voiceLvl, time);
+        vocalGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.048);
+
+        glottalOsc.connect(f1Filter);
+        glottalOsc.connect(f2Filter);
+        f1Filter.connect(vocalGain);
+        f2Filter.connect(vocalGain);
+        vocalGain.connect(gainNode);
+
+        tNoise.start(time);
+        glottalOsc.start(time);
+        tNoise.stop(time + 0.02);
+        glottalOsc.stop(time + 0.05);
+        break;
+      }
+
+      case 'laugh': {
+        // 12. Chuckle / Cartoon Giggle ("Ha-HA!")
+        // Two rapid staccato pitch-inflected giggles with breathy aspiration
+        const pulses = [
+          { offset: 0.0,    pitchMult: 1.0,  gainMult: 0.8,  dur: 0.032 },
+          { offset: 0.034,  pitchMult: 1.25, gainMult: 1.0,  dur: 0.042 }
+        ];
+
+        const basePitch = isBeatOne ? 460 : (isAccent ? 390 : 330);
+
+        pulses.forEach(p => {
+          const pTime = time + p.offset;
+
+          // Vocal chuckle oscillator
+          const osc = this.audioCtx.createOscillator();
+          osc.type = 'triangle';
+
+          // Up-then-down giggle inflection
+          const pStart = basePitch * p.pitchMult;
+          osc.frequency.setValueAtTime(pStart, pTime);
+          osc.frequency.linearRampToValueAtTime(pStart * 1.35, pTime + p.dur * 0.4);
+          osc.frequency.exponentialRampToValueAtTime(pStart * 0.9, pTime + p.dur);
+
+          // "Smiling mouth" vowel formant filter (F2 resonance around 1600 Hz)
+          const filter = this.audioCtx.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.setValueAtTime(1600 * (p.pitchMult > 1.0 ? 1.15 : 1.0), pTime);
+          filter.Q.setValueAtTime(3.8, pTime);
+
+          // Breathy laughter noise burst ("H" aspiration)
+          const noiseBuffer = this.getNoiseBuffer(p.dur);
+          const noise = this.audioCtx.createBufferSource();
+          noise.buffer = noiseBuffer;
+
+          const noiseFilter = this.audioCtx.createBiquadFilter();
+          noiseFilter.type = 'bandpass';
+          noiseFilter.frequency.setValueAtTime(2200, pTime);
+          noiseFilter.Q.setValueAtTime(2.0, pTime);
+
+          const pGain = this.audioCtx.createGain();
+          const amp = (isBeatOne ? baseGain * 0.9 : (isAccent ? baseGain * 0.75 : baseGain * 0.45)) * p.gainMult;
+          pGain.gain.setValueAtTime(0.0001, pTime);
+          pGain.gain.linearRampToValueAtTime(amp, pTime + 0.005);
+          pGain.gain.exponentialRampToValueAtTime(0.0001, pTime + p.dur);
+
+          osc.connect(filter);
+          filter.connect(pGain);
+
+          noise.connect(noiseFilter);
+          noiseFilter.connect(pGain);
+
+          pGain.connect(gainNode);
+
+          osc.start(pTime);
+          noise.start(pTime);
+          osc.stop(pTime + p.dur + 0.005);
+          noise.stop(pTime + p.dur + 0.005);
+        });
+        break;
+      }
+
       case 'click':
       default: {
         // 3. Digital Studio Beep (Pro DAW Click)
