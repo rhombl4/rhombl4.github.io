@@ -1,4 +1,4 @@
-const CACHE_NAME = 'drumpad-v4';
+const CACHE_NAME = 'drumpad-v5';
 const ASSETS_TO_CACHE = [
   './',
   'index.html',
