@@ -853,3 +853,256 @@ body {
   border-color: var(--right-hand);
   background: var(--bg-card-hover);
 }
+
+/* --- Timer Transport Controls --- */
+.timer-transport-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.transport-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.45rem 0.35rem;
+  background: var(--bg-control);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.transport-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.transport-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.transport-btn:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-main);
+}
+
+.transport-btn:active {
+  transform: scale(0.95);
+}
+
+/* Specific Accent Colors for Classic Controls */
+.transport-start:hover,
+.transport-start.active {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.transport-pause:hover,
+.transport-pause.active {
+  border-color: var(--left-hand);
+  color: var(--left-hand);
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.transport-stop:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+.transport-reset:hover {
+  border-color: var(--right-hand);
+  color: var(--right-hand);
+  background: rgba(14, 165, 233, 0.15);
+}
+
+/* Install Badge */
+.badge-install {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.25), rgba(16, 185, 129, 0.25));
+  border-color: var(--right-hand);
+  color: #38bdf8;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.badge-install:hover {
+  transform: scale(1.05);
+}
+
+/* ==========================================================================
+   Horizontal / Landscape Mode (Optimized for Mobile on Stand)
+   Focuses strictly on: Beats on screen + Timer
+   ========================================================================== */
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .app-container {
+    padding: 0.35rem 0.75rem 0.75rem 0.75rem;
+    gap: 0.45rem;
+  }
+
+  .header {
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 0.95rem;
+  }
+
+  .logo-title {
+    font-size: 1rem;
+  }
+
+  .logo-subtitle,
+  .badge-streak,
+  #todayBadge {
+    display: none; /* Hide secondary clutter in landscape */
+  }
+
+  .exercise-card {
+    padding: 0.45rem 0.75rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .exercise-top-row {
+    margin-bottom: 0;
+    gap: 0.5rem;
+  }
+
+  .tip-banner {
+    display: none; /* Collapse tip to make maximum vertical room for notes */
+  }
+
+  .exercise-select {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .nav-arrow-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Beats Stage: The Hero in Landscape */
+  .stage-card {
+    padding: 0.5rem 0.5rem 0.6rem 0.5rem;
+    border-radius: var(--radius-md);
+  }
+
+  .stage-header {
+    margin-bottom: 0.4rem;
+    padding-bottom: 0.3rem;
+  }
+
+  .hand-legend {
+    font-size: 0.75rem;
+    gap: 0.6rem;
+  }
+
+  .measure-row {
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 0.35rem;
+  }
+
+  .beat-group {
+    padding: 0.25rem;
+    gap: 0.25rem;
+  }
+
+  .note-card {
+    width: 44px;
+    height: 68px;
+    padding: 0.25rem 0.1rem;
+  }
+
+  .note-hand-letter {
+    font-size: 1.55rem;
+  }
+
+  .note-sub-label {
+    font-size: 0.65rem;
+  }
+
+  .note-accent-badge {
+    font-size: 0.95rem;
+  }
+
+  /* Dashboard in Landscape: Metronome Left, Timer Right */
+  .dashboard-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .control-panel {
+    padding: 0.5rem 0.75rem;
+    gap: 0.4rem;
+    border-radius: var(--radius-md);
+  }
+
+  .bpm-number {
+    font-size: 2.3rem;
+  }
+
+  .bpm-unit {
+    font-size: 0.9rem;
+  }
+
+  .timer-number {
+    font-size: 2.3rem;
+  }
+
+  .tempo-adjust-bar {
+    gap: 0.3rem;
+  }
+
+  .bpm-btn {
+    padding: 0.3rem 0.55rem;
+    font-size: 0.8rem;
+  }
+
+  .tap-tempo-btn {
+    padding: 0.35rem 0.65rem;
+    font-size: 0.75rem;
+  }
+
+  .sound-settings-row {
+    display: none; /* Hide audio select in landscape to save vertical height */
+  }
+
+  .timer-presets {
+    gap: 0.35rem;
+  }
+
+  .preset-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .action-bar {
+    margin-top: 0.2rem;
+  }
+
+  .play-pause-btn {
+    height: 48px;
+    font-size: 1.1rem;
+  }
+
+  .footer-shortcuts {
+    display: none; /* Hide hotkey legend in horizontal mode */
+  }
+}

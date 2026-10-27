@@ -47,6 +47,10 @@ class DrumPadApp {
       timerProgress: document.getElementById('timerProgress'),
       timerModeBtn: document.getElementById('timerModeBtn'),
       timerResetBtn: document.getElementById('timerResetBtn'),
+      timerResetBtn2: document.getElementById('timerResetBtn2'),
+      timerStartBtn: document.getElementById('timerStartBtn'),
+      timerPauseBtn: document.getElementById('timerPauseBtn'),
+      timerStopBtn: document.getElementById('timerStopBtn'),
       timerPresets: document.getElementById('timerPresets'),
 
       // Action Bar
@@ -54,10 +58,14 @@ class DrumPadApp {
       playIcon: document.getElementById('playIcon'),
       playText: document.getElementById('playText'),
 
-      // Modal
+      // Modals & Install
       guideModal: document.getElementById('guideModal'),
       closeGuideBtn: document.getElementById('closeGuideBtn'),
-      curriculumList: document.getElementById('curriculumList')
+      curriculumList: document.getElementById('curriculumList'),
+      installBtn: document.getElementById('installBtn'),
+      installModal: document.getElementById('installModal'),
+      closeInstallBtn: document.getElementById('closeInstallBtn'),
+      triggerNativeInstallBtn: document.getElementById('triggerNativeInstallBtn')
     };
 
     this.init();
@@ -237,10 +245,13 @@ class DrumPadApp {
       this.dom.playPauseBtn.classList.add('is-playing');
       this.dom.playIcon.textContent = '⏸';
       this.dom.playText.textContent = 'PAUSE PRACTICE (SPACE)';
+      if (this.dom.timerStartBtn) this.dom.timerStartBtn.classList.add('active');
+      if (this.dom.timerPauseBtn) this.dom.timerPauseBtn.classList.remove('active');
     } else {
       this.dom.playPauseBtn.classList.remove('is-playing');
       this.dom.playIcon.textContent = '▶';
       this.dom.playText.textContent = 'START PRACTICE (SPACE)';
+      if (this.dom.timerStartBtn) this.dom.timerStartBtn.classList.remove('active');
       // Clear visual active highlight
       const activeCard = this.dom.patternContainer.querySelector('.note-card.is-active');
       if (activeCard) activeCard.classList.remove('is-active');
@@ -367,6 +378,38 @@ class DrumPadApp {
       this.timer.reset();
     });
 
+    // Classic Timer Transport Controls (▶ Arrow, ⏸ Two Poles, ⏹ Square, ↺ Reset)
+    if (this.dom.timerStartBtn) {
+      this.dom.timerStartBtn.addEventListener('click', async () => {
+        this.timer.start();
+        this.updatePlayState(true);
+        this.requestWakeLock();
+        await this.audio.start();
+      });
+    }
+
+    if (this.dom.timerPauseBtn) {
+      this.dom.timerPauseBtn.addEventListener('click', () => {
+        this.timer.pause();
+        this.audio.stop();
+        this.updatePlayState(false);
+      });
+    }
+
+    if (this.dom.timerStopBtn) {
+      this.dom.timerStopBtn.addEventListener('click', () => {
+        this.timer.stop();
+        this.audio.stop();
+        this.updatePlayState(false);
+      });
+    }
+
+    if (this.dom.timerResetBtn2) {
+      this.dom.timerResetBtn2.addEventListener('click', () => {
+        this.timer.reset();
+      });
+    }
+
     this.dom.timerModeBtn.addEventListener('click', () => {
       const newMode = this.timer.mode === 'countdown' ? 'stopwatch' : 'countdown';
       this.timer.setMode(newMode);
@@ -389,6 +432,50 @@ class DrumPadApp {
     this.dom.guideModal.addEventListener('click', (e) => {
       if (e.target === this.dom.guideModal) this.closeModal();
     });
+
+    // PWA Offline Installation (Chrome & Mobile)
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      if (this.dom.triggerNativeInstallBtn) {
+        this.dom.triggerNativeInstallBtn.style.display = 'flex';
+      }
+    });
+
+    if (this.dom.installBtn) {
+      this.dom.installBtn.addEventListener('click', () => {
+        this.dom.installModal.classList.add('open');
+      });
+    }
+
+    if (this.dom.closeInstallBtn) {
+      this.dom.closeInstallBtn.addEventListener('click', () => {
+        this.dom.installModal.classList.remove('open');
+      });
+    }
+
+    if (this.dom.installModal) {
+      this.dom.installModal.addEventListener('click', (e) => {
+        if (e.target === this.dom.installModal) {
+          this.dom.installModal.classList.remove('open');
+        }
+      });
+    }
+
+    if (this.dom.triggerNativeInstallBtn) {
+      this.dom.triggerNativeInstallBtn.addEventListener('click', async () => {
+        if (deferredInstallPrompt) {
+          deferredInstallPrompt.prompt();
+          const { outcome } = await deferredInstallPrompt.userChoice;
+          if (outcome === 'accepted') {
+            this.dom.installModal.classList.remove('open');
+            this.dom.installBtn.style.display = 'none';
+          }
+          deferredInstallPrompt = null;
+        }
+      });
+    }
 
     // Keyboard Shortcuts
     window.addEventListener('keydown', (e) => {

@@ -73,6 +73,13 @@ export class PracticeTimer {
     }
   }
 
+  stop() {
+    this.pause();
+    this.remainingSeconds = this.targetSeconds;
+    this.elapsedSeconds = 0;
+    this.triggerTick();
+  }
+
   reset() {
     this.pause();
     this.remainingSeconds = this.targetSeconds;

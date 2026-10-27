@@ -1,4 +1,4 @@
-const CACHE_NAME = 'drumpad-v1';
+const CACHE_NAME = 'drumpad-v2';
 const ASSETS_TO_CACHE = [
   './',
   'index.html',
@@ -13,10 +13,11 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(ASSETS_TO_CACHE);
-    }).then(() => self.skipWaiting())
+    })
   );
 });
 
@@ -35,15 +36,28 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
+
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Cache hit - return cached response
-      if (response) {
-        return response;
+    caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+      // 1. If cache hit, return cached version immediately (works 100% offline!)
+      if (cachedResponse) {
+        // Fetch fresh copy in the background to update cache (stale-while-revalidate)
+        fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, networkResponse);
+            });
+          }
+        }).catch(() => {
+          // Silent offline catch
+        });
+        return cachedResponse;
       }
-      // Otherwise fetch from network
+
+      // 2. Otherwise fetch from network and cache for next time
       return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+        if (!networkResponse || networkResponse.status !== 200) {
           return networkResponse;
         }
         const responseToCache = networkResponse.clone();
@@ -51,10 +65,12 @@ self.addEventListener('fetch', (event) => {
           cache.put(event.request, responseToCache);
         });
         return networkResponse;
+      }).catch(() => {
+        // 3. Fallback when completely offline
+        if (event.request.mode === 'navigate') {
+          return caches.match('./').then((res) => res || caches.match('index.html'));
+        }
       });
-    }).catch(() => {
-      // Fallback if offline
-      return caches.match('index.html');
     })
   );
 });
