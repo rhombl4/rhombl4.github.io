@@ -37,7 +37,7 @@ export const EXERCISES = [
     subdivision: "eighth",
     notesPerBeat: 2,
     defaultBpm: 70,
-    targetBpm: 140,
+    targetBpm: 130,
     description: "8 consecutive strokes right, then 8 strokes left. Isolates wrist warmth and builds endurance.",
     techniqueTip: "Focus on pure wrist motion without tensing shoulders. Ensure left hand rebound matches the right.",
     pattern: [
@@ -67,7 +67,7 @@ export const EXERCISES = [
     subdivision: "eighth",
     notesPerBeat: 2,
     defaultBpm: 65,
-    targetBpm: 135,
+    targetBpm: 130,
     description: "Alternating blocks of 4 strokes per hand: RRRR LLLL. Quickens hand-switching reaction time.",
     techniqueTip: "Keep the resting stick parked 1 inch from pad while the other hand plays.",
     pattern: [

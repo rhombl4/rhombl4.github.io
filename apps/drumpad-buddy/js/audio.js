@@ -71,7 +71,7 @@ export class AudioEngine {
   }
 
   setBpm(newBpm) {
-    this.bpm = Math.max(30, Math.min(260, Math.round(newBpm)));
+    this.bpm = Math.max(30, Math.min(130, Math.round(newBpm)));
   }
 
   setSoundType(type) {
