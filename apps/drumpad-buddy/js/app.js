@@ -561,8 +561,12 @@ class DrumPadApp {
     this.dom.bpmSlider.addEventListener('input', (e) => this.setBpm(parseInt(e.target.value, 10)));
     this.dom.tapTempoBtn.addEventListener('click', () => this.handleTapTempo());
 
-    this.dom.soundSelect.addEventListener('change', (e) => {
+    this.dom.soundSelect.addEventListener('change', async (e) => {
       this.audio.setSoundType(e.target.value);
+      if (!this.audio.isPlaying) {
+        await this.audio.ensureAudioContext();
+        this.audio.playClick(this.audio.audioCtx.currentTime + 0.02, true, true);
+      }
     });
 
     this.dom.muteBtn.addEventListener('click', () => {

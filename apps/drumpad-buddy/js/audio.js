@@ -88,7 +88,23 @@ export class AudioEngine {
   }
 
   /**
-   * Synthesize click sounds using pure Web Audio oscillator and filter curves
+   * Helper to create or reuse a cached noise buffer for percussive transients
+   */
+  getNoiseBuffer(seconds = 0.05) {
+    if (!this.audioCtx) return null;
+    if (this._cachedNoiseBuffer) return this._cachedNoiseBuffer;
+    const bufferSize = Math.floor(this.audioCtx.sampleRate * seconds);
+    const buffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    this._cachedNoiseBuffer = buffer;
+    return buffer;
+  }
+
+  /**
+   * Synthesize 10 distinct click sounds using pure Web Audio oscillator and filter curves
    */
   playClick(time, isBeatOne = false, isAccent = false) {
     if (this.isMuted || !this.audioCtx) return;
@@ -97,108 +113,260 @@ export class AudioEngine {
     const gainNode = this.audioCtx.createGain();
     gainNode.connect(this.audioCtx.destination);
 
-    if (this.soundType === 'woodblock') {
-      // Warm, resonant woodblock
-      const osc = this.audioCtx.createOscillator();
-      osc.type = 'sine';
-      
-      let freq = isBeatOne ? 1200 : (isAccent ? 950 : 750);
-      osc.frequency.setValueAtTime(freq, time);
-      osc.frequency.exponentialRampToValueAtTime(freq * 0.4, time + 0.035);
+    switch (this.soundType) {
+      case 'woodblock': {
+        // 1. Warm, resonant orchestral woodblock
+        const osc = this.audioCtx.createOscillator();
+        osc.type = 'sine';
+        const freq = isBeatOne ? 1200 : (isAccent ? 950 : 750);
+        osc.frequency.setValueAtTime(freq, time);
+        osc.frequency.exponentialRampToValueAtTime(freq * 0.4, time + 0.035);
 
-      const hitGain = isBeatOne ? baseGain * 1.0 : (isAccent ? baseGain * 0.85 : baseGain * 0.5);
-      gainNode.gain.setValueAtTime(hitGain, time);
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, time + 0.04);
+        const hitGain = isBeatOne ? baseGain * 1.0 : (isAccent ? baseGain * 0.85 : baseGain * 0.5);
+        gainNode.gain.setValueAtTime(hitGain, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, time + 0.04);
 
-      osc.connect(gainNode);
-      osc.start(time);
-      osc.stop(time + 0.045);
-
-    } else if (this.soundType === 'padTap') {
-      // Snappy, percussive practice pad acoustic tap
-      const osc = this.audioCtx.createOscillator();
-      osc.type = 'triangle';
-      const freq = isBeatOne ? 440 : (isAccent ? 380 : 300);
-      osc.frequency.setValueAtTime(freq, time);
-      osc.frequency.exponentialRampToValueAtTime(80, time + 0.03);
-
-      // Noise burst for stick snap
-      const bufferSize = this.audioCtx.sampleRate * 0.02;
-      const noiseBuffer = this.audioCtx.createBuffer(1, bufferSize, this.audioCtx.sampleRate);
-      const output = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        output[i] = Math.random() * 2 - 1;
+        osc.connect(gainNode);
+        osc.start(time);
+        osc.stop(time + 0.045);
+        break;
       }
-      const whiteNoise = this.audioCtx.createBufferSource();
-      whiteNoise.buffer = noiseBuffer;
 
-      const filter = this.audioCtx.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(isBeatOne ? 2500 : 1800, time);
-      filter.Q.setValueAtTime(3.0, time);
+      case 'padTap': {
+        // 2. Snappy, percussive practice pad acoustic tap
+        const osc = this.audioCtx.createOscillator();
+        osc.type = 'triangle';
+        const freq = isBeatOne ? 440 : (isAccent ? 380 : 300);
+        osc.frequency.setValueAtTime(freq, time);
+        osc.frequency.exponentialRampToValueAtTime(80, time + 0.03);
 
-      const noiseGain = this.audioCtx.createGain();
-      const nGain = isBeatOne ? baseGain * 0.7 : (isAccent ? baseGain * 0.55 : baseGain * 0.3);
-      noiseGain.gain.setValueAtTime(nGain, time);
-      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.02);
+        const noiseBuffer = this.getNoiseBuffer(0.03);
+        const whiteNoise = this.audioCtx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
 
-      whiteNoise.connect(filter);
-      filter.connect(noiseGain);
-      noiseGain.connect(gainNode);
+        const filter = this.audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(isBeatOne ? 2500 : 1800, time);
+        filter.Q.setValueAtTime(3.0, time);
 
-      const hitGain = isBeatOne ? baseGain * 0.9 : (isAccent ? baseGain * 0.7 : baseGain * 0.4);
-      gainNode.gain.setValueAtTime(hitGain, time);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+        const noiseGain = this.audioCtx.createGain();
+        const nGain = isBeatOne ? baseGain * 0.7 : (isAccent ? baseGain * 0.55 : baseGain * 0.3);
+        noiseGain.gain.setValueAtTime(nGain, time);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.02);
 
-      osc.connect(gainNode);
-      osc.start(time);
-      whiteNoise.start(time);
-      osc.stop(time + 0.04);
-      whiteNoise.stop(time + 0.03);
+        whiteNoise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(gainNode);
 
-    } else if (this.soundType === 'cowbell') {
-      // Two-oscillator metallic cowbell
-      const osc1 = this.audioCtx.createOscillator();
-      const osc2 = this.audioCtx.createOscillator();
-      osc1.type = 'square';
-      osc2.type = 'square';
+        const hitGain = isBeatOne ? baseGain * 0.9 : (isAccent ? baseGain * 0.7 : baseGain * 0.4);
+        gainNode.gain.setValueAtTime(hitGain, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
 
-      const pitchMult = isBeatOne ? 1.25 : (isAccent ? 1.1 : 1.0);
-      osc1.frequency.setValueAtTime(800 * pitchMult, time);
-      osc2.frequency.setValueAtTime(540 * pitchMult, time);
+        osc.connect(gainNode);
+        osc.start(time);
+        whiteNoise.start(time);
+        osc.stop(time + 0.04);
+        whiteNoise.stop(time + 0.03);
+        break;
+      }
 
-      const filter = this.audioCtx.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(1000, time);
-      filter.Q.setValueAtTime(2.5, time);
+      case 'cowbell': {
+        // 4. Two-oscillator metallic Latin cowbell
+        const osc1 = this.audioCtx.createOscillator();
+        const osc2 = this.audioCtx.createOscillator();
+        osc1.type = 'square';
+        osc2.type = 'square';
 
-      const hitGain = isBeatOne ? baseGain * 0.8 : (isAccent ? baseGain * 0.65 : baseGain * 0.4);
-      gainNode.gain.setValueAtTime(hitGain, time);
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, time + 0.06);
+        const pitchMult = isBeatOne ? 1.25 : (isAccent ? 1.1 : 1.0);
+        osc1.frequency.setValueAtTime(800 * pitchMult, time);
+        osc2.frequency.setValueAtTime(540 * pitchMult, time);
 
-      osc1.connect(filter);
-      osc2.connect(filter);
-      filter.connect(gainNode);
+        const filter = this.audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1000, time);
+        filter.Q.setValueAtTime(2.5, time);
 
-      osc1.start(time);
-      osc2.start(time);
-      osc1.stop(time + 0.07);
-      osc2.stop(time + 0.07);
+        const hitGain = isBeatOne ? baseGain * 0.8 : (isAccent ? baseGain * 0.65 : baseGain * 0.4);
+        gainNode.gain.setValueAtTime(hitGain, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, time + 0.06);
 
-    } else {
-      // Standard Digital Click
-      const osc = this.audioCtx.createOscillator();
-      osc.type = 'sine';
-      const freq = isBeatOne ? 1400 : (isAccent ? 1000 : 700);
-      osc.frequency.setValueAtTime(freq, time);
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gainNode);
 
-      const hitGain = isBeatOne ? baseGain * 0.9 : (isAccent ? baseGain * 0.75 : baseGain * 0.45);
-      gainNode.gain.setValueAtTime(hitGain, time);
-      gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.025);
+        osc1.start(time);
+        osc2.start(time);
+        osc1.stop(time + 0.07);
+        osc2.stop(time + 0.07);
+        break;
+      }
 
-      osc.connect(gainNode);
-      osc.start(time);
-      osc.stop(time + 0.03);
+      case 'rimshot': {
+        // 5. Acoustic Snare Rimshot / Cross-Stick
+        const osc = this.audioCtx.createOscillator();
+        osc.type = 'sine';
+        const startFreq = isBeatOne ? 2000 : (isAccent ? 1600 : 1300);
+        osc.frequency.setValueAtTime(startFreq, time);
+        osc.frequency.exponentialRampToValueAtTime(450, time + 0.025);
+
+        const noiseBuffer = this.getNoiseBuffer(0.025);
+        const noise = this.audioCtx.createBufferSource();
+        noise.buffer = noiseBuffer;
+
+        const filter = this.audioCtx.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(3200, time);
+
+        const noiseGain = this.audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(baseGain * 0.65, time);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.02);
+
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(gainNode);
+
+        gainNode.gain.setValueAtTime(baseGain * 0.95, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, time + 0.035);
+
+        osc.connect(gainNode);
+        osc.start(time);
+        noise.start(time);
+        osc.stop(time + 0.04);
+        noise.stop(time + 0.025);
+        break;
+      }
+
+      case 'clave808': {
+        // 6. Iconic Roland TR-808 Electronic Analog Clave
+        const osc = this.audioCtx.createOscillator();
+        osc.type = 'sine';
+        const freq = isBeatOne ? 2300 : (isAccent ? 1900 : 1600);
+        osc.frequency.setValueAtTime(freq, time);
+
+        gainNode.gain.setValueAtTime(baseGain * 0.9, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, time + 0.018);
+
+        osc.connect(gainNode);
+        osc.start(time);
+        osc.stop(time + 0.022);
+        break;
+      }
+
+      case 'hihat': {
+        // 7. Acoustic Pedal Hi-Hat Chick
+        const noiseBuffer = this.getNoiseBuffer(0.04);
+        const noise = this.audioCtx.createBufferSource();
+        noise.buffer = noiseBuffer;
+
+        const hp = this.audioCtx.createBiquadFilter();
+        hp.type = 'highpass';
+        hp.frequency.setValueAtTime(isBeatOne ? 7000 : 8500, time);
+
+        const bp = this.audioCtx.createBiquadFilter();
+        bp.type = 'bandpass';
+        bp.frequency.setValueAtTime(isBeatOne ? 10000 : 11500, time);
+        bp.Q.setValueAtTime(2.0, time);
+
+        noise.connect(hp);
+        hp.connect(bp);
+        bp.connect(gainNode);
+
+        const hitGain = isBeatOne ? baseGain * 0.95 : (isAccent ? baseGain * 0.75 : baseGain * 0.45);
+        gainNode.gain.setValueAtTime(hitGain, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, time + 0.035);
+
+        noise.start(time);
+        noise.stop(time + 0.04);
+        break;
+      }
+
+      case 'mechanical': {
+        // 8. Vintage Mechanical Pendulum Metronome Tick
+        const lowOsc = this.audioCtx.createOscillator();
+        lowOsc.type = 'triangle';
+        lowOsc.frequency.setValueAtTime(isBeatOne ? 220 : 160, time);
+
+        const highOsc = this.audioCtx.createOscillator();
+        highOsc.type = 'sine';
+        highOsc.frequency.setValueAtTime(isBeatOne ? 1350 : 1100, time);
+
+        gainNode.gain.setValueAtTime(baseGain * 0.9, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, time + 0.022);
+
+        lowOsc.connect(gainNode);
+        highOsc.connect(gainNode);
+
+        lowOsc.start(time);
+        highOsc.start(time);
+        lowOsc.stop(time + 0.025);
+        highOsc.stop(time + 0.025);
+        break;
+      }
+
+      case 'castanet': {
+        // 9. Castanet / Snappy Finger Snap
+        const osc = this.audioCtx.createOscillator();
+        osc.type = 'sine';
+        const freq = isBeatOne ? 3200 : (isAccent ? 2700 : 2200);
+        osc.frequency.setValueAtTime(freq, time);
+        osc.frequency.exponentialRampToValueAtTime(800, time + 0.012);
+
+        gainNode.gain.setValueAtTime(baseGain * 0.85, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, time + 0.015);
+
+        osc.connect(gainNode);
+        osc.start(time);
+        osc.stop(time + 0.018);
+        break;
+      }
+
+      case 'cyberPing': {
+        // 10. 808 Synth Bell / Cyber Ping (Cuts through headphones)
+        const osc1 = this.audioCtx.createOscillator();
+        const osc2 = this.audioCtx.createOscillator();
+        osc1.type = 'square';
+        osc2.type = 'sawtooth';
+
+        const pitchMult = isBeatOne ? 1.3 : (isAccent ? 1.15 : 1.0);
+        osc1.frequency.setValueAtTime(845 * pitchMult, time);
+        osc2.frequency.setValueAtTime(585 * pitchMult, time);
+
+        const filter = this.audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(2200, time);
+        filter.Q.setValueAtTime(4.0, time);
+
+        gainNode.gain.setValueAtTime(baseGain * 0.75, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, time + 0.08);
+
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gainNode);
+
+        osc1.start(time);
+        osc2.start(time);
+        osc1.stop(time + 0.09);
+        osc2.stop(time + 0.09);
+        break;
+      }
+
+      case 'click':
+      default: {
+        // 3. Digital Studio Beep (Pro DAW Click)
+        const osc = this.audioCtx.createOscillator();
+        osc.type = 'sine';
+        const freq = isBeatOne ? 1400 : (isAccent ? 1000 : 700);
+        osc.frequency.setValueAtTime(freq, time);
+
+        const hitGain = isBeatOne ? baseGain * 0.9 : (isAccent ? baseGain * 0.75 : baseGain * 0.45);
+        gainNode.gain.setValueAtTime(hitGain, time);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.025);
+
+        osc.connect(gainNode);
+        osc.start(time);
+        osc.stop(time + 0.03);
+        break;
+      }
     }
   }
 
