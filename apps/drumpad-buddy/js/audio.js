@@ -267,6 +267,9 @@ export class AudioEngine {
     this.currentNoteIndex++;
     if (this.currentNoteIndex >= this.currentPattern.length) {
       this.currentNoteIndex = 0; // Loop pattern
+      if (this.onLoopCompleted) {
+        this.onLoopCompleted();
+      }
     }
   }
 

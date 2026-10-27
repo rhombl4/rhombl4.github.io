@@ -1,4 +1,4 @@
-import { EXERCISES } from './exercises.js';
+import { EXERCISES, COMBO_PRESETS } from './exercises.js';
 import { AudioEngine } from './audio.js';
 import { PracticeTimer } from './timer.js';
 
@@ -10,11 +10,19 @@ class DrumPadApp {
     this.tapTimes = [];
     this.wakeLock = null;
 
+    // Combo Mode State
+    this.isComboMode = false;
+    this.activeCombo = null;
+    this.comboStep = 0;
+    this.comboBarsPlayed = 0;
+    this.customComboSelection = [1, 6, 11];
+
     // DOM Elements
     this.dom = {
       // Header
       streakCount: document.getElementById('streakCount'),
       todayMinutes: document.getElementById('todayMinutes'),
+      comboBtn: document.getElementById('comboBtn'),
       wakeLockBtn: document.getElementById('wakeLockBtn'),
       guideBtn: document.getElementById('guideBtn'),
       
@@ -22,10 +30,18 @@ class DrumPadApp {
       exerciseSelect: document.getElementById('exerciseSelect'),
       prevExBtn: document.getElementById('prevExBtn'),
       nextExBtn: document.getElementById('nextExBtn'),
+      openComboModalBtn: document.getElementById('openComboModalBtn'),
       exerciseSubdivision: document.getElementById('exerciseSubdivision'),
       exerciseCategory: document.getElementById('exerciseCategory'),
       targetBpmTag: document.getElementById('targetBpmTag'),
       techniqueTipText: document.getElementById('techniqueTipText'),
+
+      // Combo Banner
+      comboStatusBanner: document.getElementById('comboStatusBanner'),
+      comboRoutineTitle: document.getElementById('comboRoutineTitle'),
+      comboStepPill: document.getElementById('comboStepPill'),
+      comboNextStepBtn: document.getElementById('comboNextStepBtn'),
+      comboExitBtn: document.getElementById('comboExitBtn'),
 
       // Stage / Pattern
       patternContainer: document.getElementById('patternContainer'),
@@ -65,7 +81,19 @@ class DrumPadApp {
       installBtn: document.getElementById('installBtn'),
       installModal: document.getElementById('installModal'),
       closeInstallBtn: document.getElementById('closeInstallBtn'),
-      triggerNativeInstallBtn: document.getElementById('triggerNativeInstallBtn')
+      triggerNativeInstallBtn: document.getElementById('triggerNativeInstallBtn'),
+
+      // Combo Modal
+      comboModal: document.getElementById('comboModal'),
+      closeComboBtn: document.getElementById('closeComboBtn'),
+      tabCuratedCombos: document.getElementById('tabCuratedCombos'),
+      tabCustomCombo: document.getElementById('tabCustomCombo'),
+      curatedCombosPanel: document.getElementById('curatedCombosPanel'),
+      customComboPanel: document.getElementById('customComboPanel'),
+      customComboBarsSelect: document.getElementById('customComboBarsSelect'),
+      customComboExerciseGrid: document.getElementById('customComboExerciseGrid'),
+      customComboSelectedPills: document.getElementById('customComboSelectedPills'),
+      startCustomComboBtn: document.getElementById('startCustomComboBtn')
     };
 
     this.init();
@@ -74,6 +102,8 @@ class DrumPadApp {
   init() {
     this.populateExerciseSelect();
     this.renderCurriculumModal();
+    this.renderCuratedCombos();
+    this.renderCustomComboBuilder();
     this.loadExercise(0);
     this.updateStatsUI();
     this.bindEvents();
@@ -81,6 +111,11 @@ class DrumPadApp {
     // Setup audio callback for synchronized visual triggers
     this.audio.onNoteTrigger = ({ noteIndex, note, isBeatOne }) => {
       this.highlightNote(noteIndex, isBeatOne);
+    };
+
+    // Setup audio loop callback for seamless combo progression
+    this.audio.onLoopCompleted = () => {
+      this.handleLoopCompleted();
     };
 
     // Setup timer callbacks
@@ -111,7 +146,7 @@ class DrumPadApp {
     });
   }
 
-  loadExercise(index) {
+  loadExercise(index, isAutoTransition = false) {
     if (index < 0) index = EXERCISES.length - 1;
     if (index >= EXERCISES.length) index = 0;
 
@@ -124,8 +159,8 @@ class DrumPadApp {
     this.dom.targetBpmTag.textContent = `Goal: ${ex.targetBpm} BPM`;
     this.dom.techniqueTipText.textContent = ex.techniqueTip;
 
-    // Set BPM to exercise default if metronome is stopped
-    if (!this.audio.isPlaying) {
+    // Set BPM to exercise default if metronome is stopped and not an auto combo step
+    if (!this.audio.isPlaying && !isAutoTransition) {
       this.setBpm(ex.defaultBpm);
     }
 
@@ -265,9 +300,170 @@ class DrumPadApp {
     this.dom.todayMinutes.textContent = stats.todayMinutes || 0;
   }
 
+  // --- Workout Combo & Routine Engine ---
+
+  handleLoopCompleted() {
+    if (!this.isComboMode || !this.activeCombo) return;
+
+    this.comboBarsPlayed++;
+    if (this.comboBarsPlayed >= this.activeCombo.barsPerExercise) {
+      this.comboBarsPlayed = 0;
+      this.comboStep = (this.comboStep + 1) % this.activeCombo.exerciseIds.length;
+      const nextId = this.activeCombo.exerciseIds[this.comboStep];
+      const nextIndex = EXERCISES.findIndex(e => e.id === nextId);
+      if (nextIndex !== -1) {
+        this.loadExercise(nextIndex, true);
+      }
+    }
+    this.updateComboBanner();
+  }
+
+  updateComboBanner() {
+    if (!this.isComboMode || !this.activeCombo) {
+      this.dom.comboStatusBanner.style.display = 'none';
+      return;
+    }
+
+    this.dom.comboStatusBanner.style.display = 'flex';
+    this.dom.comboRoutineTitle.textContent = this.activeCombo.name;
+
+    const totalSteps = this.activeCombo.exerciseIds.length;
+    const currentStepNum = this.comboStep + 1;
+    const currentBarNum = this.comboBarsPlayed + 1;
+    const totalBars = this.activeCombo.barsPerExercise;
+
+    this.dom.comboStepPill.textContent = `Ex ${currentStepNum}/${totalSteps} • Bar ${currentBarNum}/${totalBars}`;
+  }
+
+  startCombo(combo) {
+    this.isComboMode = true;
+    this.activeCombo = combo;
+    this.comboStep = 0;
+    this.comboBarsPlayed = 0;
+
+    const firstId = combo.exerciseIds[0];
+    const firstIndex = EXERCISES.findIndex(e => e.id === firstId);
+    if (firstIndex !== -1) {
+      this.loadExercise(firstIndex);
+    }
+    this.updateComboBanner();
+    this.closeComboModal();
+  }
+
+  exitComboMode() {
+    this.isComboMode = false;
+    this.activeCombo = null;
+    this.dom.comboStatusBanner.style.display = 'none';
+  }
+
+  skipComboStep() {
+    if (!this.isComboMode || !this.activeCombo) return;
+    this.comboBarsPlayed = 0;
+    this.comboStep = (this.comboStep + 1) % this.activeCombo.exerciseIds.length;
+    const nextId = this.activeCombo.exerciseIds[this.comboStep];
+    const nextIndex = EXERCISES.findIndex(e => e.id === nextId);
+    if (nextIndex !== -1) {
+      this.loadExercise(nextIndex, true);
+    }
+    this.updateComboBanner();
+  }
+
+  renderCuratedCombos() {
+    this.dom.curatedCombosPanel.innerHTML = '';
+    COMBO_PRESETS.forEach(combo => {
+      const card = document.createElement('div');
+      card.className = 'curated-combo-card';
+
+      const exercisesListHtml = combo.exerciseIds.map(id => {
+        const ex = EXERCISES.find(e => e.id === id);
+        return `<span class="combo-pill">#${id} ${ex ? ex.name : ''}</span>`;
+      }).join('');
+
+      card.innerHTML = `
+        <div style="flex: 1;">
+          <div class="curated-combo-title">⚡ ${combo.name}</div>
+          <div class="curated-combo-desc">${combo.description} • <strong>${combo.barsPerExercise} Bars each</strong></div>
+          <div class="curated-combo-pills">${exercisesListHtml}</div>
+        </div>
+        <button class="bpm-btn" style="background: linear-gradient(135deg, #059669, #10b981); color: #fff; border: none; padding: 0.6rem 1rem; border-radius: var(--radius-sm); font-weight: 800; cursor: pointer; white-space: nowrap;">
+          Start Routine ▶
+        </button>
+      `;
+
+      card.querySelector('button').addEventListener('click', () => {
+        this.startCombo(combo);
+      });
+
+      this.dom.curatedCombosPanel.appendChild(card);
+    });
+  }
+
+  renderCustomComboBuilder() {
+    this.dom.customComboExerciseGrid.innerHTML = '';
+    EXERCISES.forEach(ex => {
+      const item = document.createElement('div');
+      item.className = `custom-combo-item ${this.customComboSelection.includes(ex.id) ? 'selected' : ''}`;
+      item.dataset.id = ex.id;
+
+      const orderIdx = this.customComboSelection.indexOf(ex.id);
+      const badgeHtml = orderIdx !== -1 
+        ? `<span class="custom-combo-order-badge">${orderIdx + 1}</span>` 
+        : `<span style="font-size: 0.75rem; color: var(--text-subtle);">${String(ex.id).padStart(2, '0')}</span>`;
+
+      item.innerHTML = `
+        ${badgeHtml}
+        <span style="font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${ex.name}</span>
+      `;
+
+      item.addEventListener('click', () => {
+        const idx = this.customComboSelection.indexOf(ex.id);
+        if (idx !== -1) {
+          this.customComboSelection.splice(idx, 1);
+        } else {
+          if (this.customComboSelection.length >= 8) {
+            alert('You can select up to 8 exercises in a custom combo!');
+            return;
+          }
+          this.customComboSelection.push(ex.id);
+        }
+        this.renderCustomComboBuilder();
+      });
+
+      this.dom.customComboExerciseGrid.appendChild(item);
+    });
+
+    this.updateCustomComboPills();
+  }
+
+  updateCustomComboPills() {
+    if (this.customComboSelection.length === 0) {
+      this.dom.customComboSelectedPills.innerHTML = '<span style="color: var(--text-subtle);">None selected yet. Click exercises above to chain them.</span>';
+      return;
+    }
+
+    this.dom.customComboSelectedPills.innerHTML = this.customComboSelection.map((id, index) => {
+      const ex = EXERCISES.find(e => e.id === id);
+      return `
+        <span style="background: rgba(14, 165, 233, 0.2); border: 1px solid var(--right-hand); color: #fff; padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.35rem;">
+          <strong>${index + 1}.</strong> ${ex ? ex.name : `Ex #${id}`}
+        </span>
+      `;
+    }).join(' <span style="color: var(--accent-gold); font-weight: 900;">→</span> ');
+  }
+
   renderCurriculumModal() {
     this.dom.curriculumList.innerHTML = '';
+    let currentCategory = null;
+
     EXERCISES.forEach((ex, idx) => {
+      if (ex.category !== currentCategory) {
+        currentCategory = ex.category;
+        const catHeader = document.createElement('div');
+        catHeader.style.cssText = 'font-weight: 800; font-size: 0.85rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.5rem 0.2rem 0.2rem 0.2rem; border-bottom: 1px solid rgba(251, 191, 36, 0.2); margin-top: 0.5rem;';
+        catHeader.textContent = currentCategory;
+        this.dom.curriculumList.appendChild(catHeader);
+      }
+
       const item = document.createElement('div');
       item.className = 'curriculum-list-item';
       item.innerHTML = `
@@ -276,7 +472,7 @@ class DrumPadApp {
             ${String(ex.id).padStart(2, '0')}. ${ex.name}
           </div>
           <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
-            ${ex.category} • ${ex.description}
+            ${ex.description}
           </div>
         </div>
         <div style="text-align: right; min-width: 90px;">
@@ -284,11 +480,20 @@ class DrumPadApp {
         </div>
       `;
       item.addEventListener('click', () => {
+        this.exitComboMode();
         this.loadExercise(idx);
         this.closeModal();
       });
       this.dom.curriculumList.appendChild(item);
     });
+  }
+
+  openComboModal() {
+    this.dom.comboModal.classList.add('open');
+  }
+
+  closeComboModal() {
+    this.dom.comboModal.classList.remove('open');
   }
 
   openModal() {
@@ -336,12 +541,15 @@ class DrumPadApp {
 
     // Exercise Navigation
     this.dom.exerciseSelect.addEventListener('change', (e) => {
+      this.exitComboMode();
       this.loadExercise(parseInt(e.target.value, 10));
     });
     this.dom.prevExBtn.addEventListener('click', () => {
+      this.exitComboMode();
       this.loadExercise(this.currentExerciseIndex - 1);
     });
     this.dom.nextExBtn.addEventListener('click', () => {
+      this.exitComboMode();
       this.loadExercise(this.currentExerciseIndex + 1);
     });
 
@@ -433,6 +641,66 @@ class DrumPadApp {
       if (e.target === this.dom.guideModal) this.closeModal();
     });
 
+    // Combo & Routine Modal Events
+    if (this.dom.comboBtn) {
+      this.dom.comboBtn.addEventListener('click', () => this.openComboModal());
+    }
+    if (this.dom.openComboModalBtn) {
+      this.dom.openComboModalBtn.addEventListener('click', () => this.openComboModal());
+    }
+    if (this.dom.closeComboBtn) {
+      this.dom.closeComboBtn.addEventListener('click', () => this.closeComboModal());
+    }
+    if (this.dom.comboModal) {
+      this.dom.comboModal.addEventListener('click', (e) => {
+        if (e.target === this.dom.comboModal) this.closeComboModal();
+      });
+    }
+
+    // Combo Tab Switching
+    if (this.dom.tabCuratedCombos && this.dom.tabCustomCombo) {
+      this.dom.tabCuratedCombos.addEventListener('click', () => {
+        this.dom.tabCuratedCombos.classList.add('active');
+        this.dom.tabCustomCombo.classList.remove('active');
+        this.dom.curatedCombosPanel.style.display = 'flex';
+        this.dom.customComboPanel.style.display = 'none';
+      });
+
+      this.dom.tabCustomCombo.addEventListener('click', () => {
+        this.dom.tabCustomCombo.classList.add('active');
+        this.dom.tabCuratedCombos.classList.remove('active');
+        this.dom.customComboPanel.style.display = 'flex';
+        this.dom.curatedCombosPanel.style.display = 'none';
+      });
+    }
+
+    // Start Custom Combo Button
+    if (this.dom.startCustomComboBtn) {
+      this.dom.startCustomComboBtn.addEventListener('click', () => {
+        if (this.customComboSelection.length < 2) {
+          alert('Please select at least 2 exercises to build a combo routine!');
+          return;
+        }
+        const barsPerExercise = parseInt(this.dom.customComboBarsSelect.value, 10) || 4;
+        const customRoutine = {
+          id: 'custom-routine',
+          name: `Custom Routine (${this.customComboSelection.length} Rudiments)`,
+          description: 'User-created custom practice combination',
+          barsPerExercise,
+          exerciseIds: [...this.customComboSelection]
+        };
+        this.startCombo(customRoutine);
+      });
+    }
+
+    // Combo Active Banner Buttons
+    if (this.dom.comboNextStepBtn) {
+      this.dom.comboNextStepBtn.addEventListener('click', () => this.skipComboStep());
+    }
+    if (this.dom.comboExitBtn) {
+      this.dom.comboExitBtn.addEventListener('click', () => this.exitComboMode());
+    }
+
     // PWA Offline Installation (Chrome & Mobile)
     let deferredInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -519,12 +787,17 @@ class DrumPadApp {
           e.preventDefault();
           this.dom.muteBtn.click();
           break;
+        case 'KeyC':
+          e.preventDefault();
+          this.openComboModal();
+          break;
         case 'KeyR':
           e.preventDefault();
           this.dom.timerResetBtn.click();
           break;
         case 'Escape':
           this.closeModal();
+          this.closeComboModal();
           break;
       }
     });

@@ -1,19 +1,23 @@
 /**
- * 10 Essential Practice Pad Exercises Curriculum for Beginner Drummers
+ * 30 Essential Practice Pad Exercises & Rudiments Curriculum
+ * Grouped into 6 Technique Mastery Pillars with Curated Combo Routines
  */
 
 export const EXERCISES = [
+  // ==========================================
+  // PILLAR 1: FUNDAMENTALS & WARM-UPS (1-5)
+  // ==========================================
   {
     id: 1,
     name: "Single Stroke Alternation",
-    category: "Fundamental Alternation",
+    category: "Pillar 1: Warm-Up & Balance",
     timeSignature: [4, 4],
     subdivision: "eighth",
     notesPerBeat: 2,
     defaultBpm: 60,
     targetBpm: 130,
-    description: "The most fundamental drumming movement. Focus on balanced sound and height between both hands.",
-    techniqueTip: "Maintain relaxed grip fulcrum between thumb and index finger. Allow the stick to bounce back naturally like a basketball.",
+    description: "The core foundational movement. Equal stick height and matched sound between left and right hands.",
+    techniqueTip: "Maintain relaxed grip fulcrum between thumb and index finger. Let the stick bounce like a basketball.",
     pattern: [
       { hand: "R", accent: true,  beat: "1", sub: "" },
       { hand: "L", accent: false, beat: "",  sub: "&" },
@@ -28,16 +32,15 @@ export const EXERCISES = [
   {
     id: 2,
     name: "Eight on a Hand",
-    category: "Wrist Warm-Up & Isolation",
+    category: "Pillar 1: Warm-Up & Balance",
     timeSignature: [4, 4],
     subdivision: "eighth",
     notesPerBeat: 2,
     defaultBpm: 70,
     targetBpm: 140,
-    description: "8 consecutive strokes on the right hand, followed by 8 consecutive strokes on the left hand.",
-    techniqueTip: "Isolate the wrist motion without tensing your forearm or shoulders. Ensure the left hand matches the right hand's tone.",
+    description: "8 consecutive strokes right, then 8 strokes left. Isolates wrist warmth and builds endurance.",
+    techniqueTip: "Focus on pure wrist motion without tensing shoulders. Ensure left hand rebound matches the right.",
     pattern: [
-      // Measure 1: All Rights
       { hand: "R", accent: true,  beat: "1", sub: "" },
       { hand: "R", accent: false, beat: "",  sub: "&" },
       { hand: "R", accent: false, beat: "2", sub: "" },
@@ -46,7 +49,6 @@ export const EXERCISES = [
       { hand: "R", accent: false, beat: "",  sub: "&" },
       { hand: "R", accent: false, beat: "4", sub: "" },
       { hand: "R", accent: false, beat: "",  sub: "&" },
-      // Measure 2: All Lefts
       { hand: "L", accent: true,  beat: "1", sub: "" },
       { hand: "L", accent: false, beat: "",  sub: "&" },
       { hand: "L", accent: false, beat: "2", sub: "" },
@@ -59,100 +61,268 @@ export const EXERCISES = [
   },
   {
     id: 3,
-    name: "Single Stroke 16ths",
-    category: "Subdivision Flow",
+    name: "Four on a Hand",
+    category: "Pillar 1: Warm-Up & Balance",
     timeSignature: [4, 4],
-    subdivision: "sixteenth",
-    notesPerBeat: 4,
-    defaultBpm: 50,
-    targetBpm: 105,
-    description: "Alternating 16th notes counting '1 e & a, 2 e & a'. The backbone of rock and funk grooves.",
-    techniqueTip: "Count out loud: 'One-ee-and-a, Two-ee-and-a'. Keep the stick tips low and matched in height (approx. 4 inches / 10cm).",
+    subdivision: "eighth",
+    notesPerBeat: 2,
+    defaultBpm: 65,
+    targetBpm: 135,
+    description: "Alternating blocks of 4 strokes per hand: RRRR LLLL. Quickens hand-switching reaction time.",
+    techniqueTip: "Keep the resting stick parked 1 inch from pad while the other hand plays.",
     pattern: [
       { hand: "R", accent: true,  beat: "1", sub: "" },
-      { hand: "L", accent: false, beat: "",  sub: "e" },
       { hand: "R", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" },
-
       { hand: "R", accent: false, beat: "2", sub: "" },
-      { hand: "L", accent: false, beat: "",  sub: "e" },
       { hand: "R", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" },
-
-      { hand: "R", accent: false, beat: "3", sub: "" },
-      { hand: "L", accent: false, beat: "",  sub: "e" },
-      { hand: "R", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" },
-
-      { hand: "R", accent: false, beat: "4", sub: "" },
-      { hand: "L", accent: false, beat: "",  sub: "e" },
-      { hand: "R", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" }
+      { hand: "L", accent: true,  beat: "3", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "4", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "&" }
     ]
   },
   {
     id: 4,
-    name: "Double Stroke Roll",
-    category: "Rebound Control",
-    timeSignature: [4, 4],
-    subdivision: "sixteenth",
-    notesPerBeat: 4,
-    defaultBpm: 45,
-    targetBpm: 95,
-    description: "Two hits per hand: RR LL RR LL. Do not squeeze the stick; allow the second stroke to bounce freely.",
-    techniqueTip: "Think 'Drop-Snap'. The first stroke is wrist motion; the second stroke is controlled with your back fingers (middle, ring, pinky).",
-    pattern: [
-      { hand: "R", accent: true,  beat: "1", sub: "" },
-      { hand: "R", accent: false, beat: "",  sub: "e" },
-      { hand: "L", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" },
-
-      { hand: "R", accent: false, beat: "2", sub: "" },
-      { hand: "R", accent: false, beat: "",  sub: "e" },
-      { hand: "L", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" },
-
-      { hand: "R", accent: false, beat: "3", sub: "" },
-      { hand: "R", accent: false, beat: "",  sub: "e" },
-      { hand: "L", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" },
-
-      { hand: "R", accent: false, beat: "4", sub: "" },
-      { hand: "R", accent: false, beat: "",  sub: "e" },
-      { hand: "L", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" }
-    ]
-  },
-  {
-    id: 5,
-    name: "Single Paradiddle",
-    category: "Rudiment Core",
+    name: "Single Stroke 16ths",
+    category: "Pillar 1: Warm-Up & Balance",
     timeSignature: [4, 4],
     subdivision: "sixteenth",
     notesPerBeat: 4,
     defaultBpm: 50,
     targetBpm: 110,
-    description: "The holy grail of drumming rudiments: R-L-R-R followed by L-R-L-L. Flips your leading hand every two beats.",
-    techniqueTip: "Syllable memory: 'PA-RA-DID-DLE'. Accent the first syllable (PA) and play the rest as lighter tap strokes.",
+    description: "Alternating 16th notes counting '1 e & a, 2 e & a'. The fundamental backbone of all groove fills.",
+    techniqueTip: "Subdivide in your head: 'One-ee-and-a'. Keep stroke heights identical.",
     pattern: [
-      // Beat 1 & 2: R L R R
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "2", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "3", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "4", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+  {
+    id: 5,
+    name: "The Stone Killer Warm-Up",
+    category: "Pillar 1: Warm-Up & Balance",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 50,
+    targetBpm: 100,
+    description: "4 strokes right, 4 strokes left in continuous 16th notes. George Lawrence Stone's legendary exercise.",
+    techniqueTip: "Use fingers on strokes 2, 3, and 4 to reinforce finger dexterity and rebound.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: true,  beat: "2", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: true,  beat: "3", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: true,  beat: "4", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+
+  // ==========================================
+  // PILLAR 2: DOUBLE STROKES & ROLLS (6-10)
+  // ==========================================
+  {
+    id: 6,
+    name: "Double Stroke Roll",
+    category: "Pillar 2: Doubles & Rolls",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 45,
+    targetBpm: 95,
+    description: "Two hits per hand: RR LL RR LL. Let the natural bounce do the work on the second stroke.",
+    techniqueTip: "Think 'Drop-Snap'. Wrist drops the first note; rear fingers snap the second note.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "2", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "3", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "4", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+  {
+    id: 7,
+    name: "Five-Stroke Roll",
+    category: "Pillar 2: Doubles & Rolls",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 50,
+    targetBpm: 105,
+    description: "RR-LL-R followed by LL-RR-L. Four 32nds/16ths ending on a crisp accented single release note.",
+    techniqueTip: "Emphasize the release note (the 5th stroke) with a solid accented wrist snap.",
+    pattern: [
+      { hand: "R", accent: false, beat: "1", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: true,  beat: "2", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "3", sub: "" },
+      { hand: "L", accent: true,  beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: false, beat: "4", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: true,  beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+  {
+    id: 8,
+    name: "Six-Stroke Roll",
+    category: "Pillar 2: Doubles & Rolls",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 55,
+    targetBpm: 115,
+    description: "Pattern: R-LL-RR-L with accents on the outer singles: >R ll rr >L. Steve Gadd's signature rudiment.",
+    techniqueTip: "Make the middle four notes (LL RR) quiet taps so the accents really sing.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "2", sub: "" },
+      { hand: "L", accent: true,  beat: "",  sub: "e" },
+      { hand: "R", accent: true,  beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: false, beat: "3", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: true,  beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "4", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+  {
+    id: 9,
+    name: "Seven-Stroke Roll",
+    category: "Pillar 2: Doubles & Rolls",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 50,
+    targetBpm: 100,
+    description: "RR-LL-RR-L (three sets of doubles + accented release). Starts and ends on opposite hands.",
+    techniqueTip: "Count '1 and 2 and 3 and 4'. Keep the three double sets smooth and even.",
+    pattern: [
+      { hand: "R", accent: false, beat: "1", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "2", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: true,  beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: false, beat: "3", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: false, beat: "4", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: true,  beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+  {
+    id: 10,
+    name: "Nine-Stroke Roll",
+    category: "Pillar 2: Doubles & Rolls",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 50,
+    targetBpm: 105,
+    description: "Four sets of doubles finishing with an accented downbeat: RR LL RR LL >R.",
+    techniqueTip: "Land the 9th note firmly on the downbeat with a centered, authoritative tap.",
+    pattern: [
+      { hand: "R", accent: false, beat: "1", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "2", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: true,  beat: "3", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "4", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+
+  // ==========================================
+  // PILLAR 3: PARADIDDLE MASTERY (11-16)
+  // ==========================================
+  {
+    id: 11,
+    name: "Single Paradiddle",
+    category: "Pillar 3: Paradiddles",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 50,
+    targetBpm: 115,
+    description: "The crown jewel of drumming: R-L-R-R followed by L-R-L-L. Switches lead hand every 2 beats.",
+    techniqueTip: "Syllable chant: 'PA-RA-DID-DLE'. Accent 'PA' and play 'ra-did-dle' as softer tap strokes.",
+    pattern: [
       { hand: "R", accent: true,  beat: "1", sub: "" },
       { hand: "L", accent: false, beat: "",  sub: "e" },
       { hand: "R", accent: false, beat: "",  sub: "&" },
       { hand: "R", accent: false, beat: "",  sub: "a" },
-
-      // Beat 3 & 4: L R L L
       { hand: "L", accent: true,  beat: "2", sub: "" },
       { hand: "R", accent: false, beat: "",  sub: "e" },
       { hand: "L", accent: false, beat: "",  sub: "&" },
       { hand: "L", accent: false, beat: "",  sub: "a" },
-
-      // Second half
       { hand: "R", accent: true,  beat: "3", sub: "" },
       { hand: "L", accent: false, beat: "",  sub: "e" },
       { hand: "R", accent: false, beat: "",  sub: "&" },
       { hand: "R", accent: false, beat: "",  sub: "a" },
-
       { hand: "L", accent: true,  beat: "4", sub: "" },
       { hand: "R", accent: false, beat: "",  sub: "e" },
       { hand: "L", accent: false, beat: "",  sub: "&" },
@@ -160,32 +330,357 @@ export const EXERCISES = [
     ]
   },
   {
-    id: 6,
-    name: "Accent & Tap (Downstroke / Upstroke)",
-    category: "Dynamic Control",
-    timeSignature: [4, 4],
+    id: 12,
+    name: "Double Paradiddle",
+    category: "Pillar 3: Paradiddles",
+    timeSignature: [3, 4],
     subdivision: "sixteenth",
     notesPerBeat: 4,
-    defaultBpm: 50,
-    targetBpm: 95,
-    description: "Build dynamic contrast between loud downstrokes and soft taps. Accents land on the main downbeats.",
-    techniqueTip: "Downstroke stops 1 inch from pad after the accent. Upstrokes start low and finish high to prepare the next accent.",
+    defaultBpm: 55,
+    targetBpm: 115,
+    description: "Adds an extra pair of alternating singles: R-L-R-L-R-R followed by L-R-L-R-L-L in 6-note groupings.",
+    techniqueTip: "Super useful in 6/8 and jazz swing feels. Keep the alternation light and rolling.",
     pattern: [
       { hand: "R", accent: true,  beat: "1", sub: "" },
       { hand: "L", accent: false, beat: "",  sub: "e" },
       { hand: "R", accent: false, beat: "",  sub: "&" },
       { hand: "L", accent: false, beat: "",  sub: "a" },
-
-      { hand: "L", accent: true,  beat: "2", sub: "" },
+      { hand: "R", accent: false, beat: "2", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: true,  beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: false, beat: "3", sub: "" },
       { hand: "R", accent: false, beat: "",  sub: "e" },
       { hand: "L", accent: false, beat: "",  sub: "&" },
-      { hand: "R", accent: false, beat: "",  sub: "a" },
-
-      { hand: "R", accent: true,  beat: "3", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+  {
+    id: 13,
+    name: "Triple Paradiddle",
+    category: "Pillar 3: Paradiddles",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 50,
+    targetBpm: 105,
+    description: "Three pairs of singles before the diddle: R-L-R-L-R-L-R-R then L-R-L-R-L-R-L-L.",
+    techniqueTip: "Don't rush the 6 alternating singles. Let the diddle land on time with precision.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
       { hand: "L", accent: false, beat: "",  sub: "e" },
       { hand: "R", accent: false, beat: "",  sub: "&" },
       { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "2", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: true,  beat: "3", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: false, beat: "4", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+  {
+    id: 14,
+    name: "Inverted Paradiddle",
+    category: "Pillar 3: Paradiddles",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 45,
+    targetBpm: 100,
+    description: "Moves the diddle into the middle: R-L-L-R followed by L-R-R-L. Smoothes out stick transitions.",
+    techniqueTip: "Inner doubles (LL and RR) must remain relaxed and quiet so the outer notes stand tall.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: true,  beat: "2", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: true,  beat: "3", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: true,  beat: "4", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+  {
+    id: 15,
+    name: "Paradiddle-Diddle",
+    category: "Pillar 3: Paradiddles",
+    timeSignature: [3, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 55,
+    targetBpm: 115,
+    description: "Sticking: R-L-R-R-L-L. Two diddles in a row! Notice the same hand leads on every cycle.",
+    techniqueTip: "Practice leading both with Right hand (RLRRLL) and Left hand (LRLLRR).",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: false, beat: "2", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: true,  beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "3", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+  {
+    id: 16,
+    name: "Delayed Paradiddle",
+    category: "Pillar 3: Paradiddles",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 45,
+    targetBpm: 95,
+    description: "Pattern: R-L-R-L-L R-L-R-R. Pushes the double to beats '&' and 'a'. Highly syncopated.",
+    techniqueTip: "Count carefully. Keep your feet tapping quarter notes to anchor the downbeat.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: false, beat: "2", sub: "" },
+      { hand: "R", accent: true,  beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "3", sub: "" },
+      { hand: "L", accent: true,  beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: false, beat: "4", sub: "" },
+      { hand: "R", accent: true,  beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" }
+    ]
+  },
 
+  // ==========================================
+  // PILLAR 4: FLAMS & GRACE NOTES (17-21)
+  // ==========================================
+  {
+    id: 17,
+    name: "Alternating Flams",
+    category: "Pillar 4: Flams & Grace Notes",
+    timeSignature: [4, 4],
+    subdivision: "eighth",
+    notesPerBeat: 2,
+    defaultBpm: 50,
+    targetBpm: 90,
+    description: "Grace note followed instantly by a primary accented stroke: lR then rL. Adds immense weight.",
+    techniqueTip: "Grace stick starts 1 inch above pad; primary stick starts 8 inches up. Both drop together.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: true,  beat: "2", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: true,  beat: "3", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: true,  beat: "4", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "&" }
+    ]
+  },
+  {
+    id: 18,
+    name: "Flam Accent",
+    category: "Pillar 4: Flams & Grace Notes",
+    timeSignature: [4, 4],
+    subdivision: "triplet",
+    notesPerBeat: 3,
+    defaultBpm: 50,
+    targetBpm: 100,
+    description: "Sticking: lR-L-R followed by rL-R-L in continuous triplets. Classic marching and drum solo rudiment.",
+    techniqueTip: "The flam lands on beat 1; the next two notes are soft taps that set up the opposite flam.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "t" },
+      { hand: "R", accent: false, beat: "",  sub: "l" },
+      { hand: "L", accent: true,  beat: "2", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "t" },
+      { hand: "L", accent: false, beat: "",  sub: "l" },
+      { hand: "R", accent: true,  beat: "3", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "t" },
+      { hand: "R", accent: false, beat: "",  sub: "l" },
+      { hand: "L", accent: true,  beat: "4", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "t" },
+      { hand: "L", accent: false, beat: "",  sub: "l" }
+    ]
+  },
+  {
+    id: 19,
+    name: "Flam Tap",
+    category: "Pillar 4: Flams & Grace Notes",
+    timeSignature: [4, 4],
+    subdivision: "eighth",
+    notesPerBeat: 2,
+    defaultBpm: 50,
+    targetBpm: 105,
+    description: "Pattern: lR-R followed by rL-L. Essentially a double stroke with a flam on the first note.",
+    techniqueTip: "The tap note (second stroke) must be low to avoid sounding like a double accent.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: true,  beat: "2", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: true,  beat: "3", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: true,  beat: "4", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "&" }
+    ]
+  },
+  {
+    id: 20,
+    name: "Flamacue",
+    category: "Pillar 4: Flams & Grace Notes",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 45,
+    targetBpm: 90,
+    description: "Tricky accent displacement: lR-L-R-L-lR. The accent lands on the SECOND note ('e'), not the downbeat!",
+    techniqueTip: "Play the first flam softly, then CRACK the 'e' note loudly with an aggressive downstroke.",
+    pattern: [
+      { hand: "R", accent: false, beat: "1", sub: "" },
+      { hand: "L", accent: true,  beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "2", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: false, beat: "3", sub: "" },
+      { hand: "R", accent: true,  beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: false, beat: "4", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+  {
+    id: 21,
+    name: "Swiss Army Triplet",
+    category: "Pillar 4: Flams & Grace Notes",
+    timeSignature: [4, 4],
+    subdivision: "triplet",
+    notesPerBeat: 3,
+    defaultBpm: 50,
+    targetBpm: 110,
+    description: "Sticking: lR-R-L lR-R-L. Notice the lead hand stays on the right every single triplet!",
+    techniqueTip: "Right hand plays a Flam-Tap while the Left hand slips in a quick upbeat tap.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "t" },
+      { hand: "L", accent: false, beat: "",  sub: "l" },
+      { hand: "R", accent: true,  beat: "2", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "t" },
+      { hand: "L", accent: false, beat: "",  sub: "l" },
+      { hand: "R", accent: true,  beat: "3", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "t" },
+      { hand: "L", accent: false, beat: "",  sub: "l" },
+      { hand: "R", accent: true,  beat: "4", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "t" },
+      { hand: "L", accent: false, beat: "",  sub: "l" }
+    ]
+  },
+
+  // ==========================================
+  // PILLAR 5: TRIPLETS & SYNCOPATION (22-26)
+  // ==========================================
+  {
+    id: 22,
+    name: "Single Stroke Triplet Flow",
+    category: "Pillar 5: Triplets & Syncopation",
+    timeSignature: [4, 4],
+    subdivision: "triplet",
+    notesPerBeat: 3,
+    defaultBpm: 55,
+    targetBpm: 120,
+    description: "Three notes per beat: 1-trip-let, 2-trip-let. Alternating lead hand on every beat downbeat.",
+    techniqueTip: "Count 'ONE-trip-let, TWO-trip-let'. Feel the circular waltz bounce between hands.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "t" },
+      { hand: "R", accent: false, beat: "",  sub: "l" },
+      { hand: "L", accent: true,  beat: "2", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "t" },
+      { hand: "L", accent: false, beat: "",  sub: "l" },
+      { hand: "R", accent: true,  beat: "3", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "t" },
+      { hand: "R", accent: false, beat: "",  sub: "l" },
+      { hand: "L", accent: true,  beat: "4", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "t" },
+      { hand: "L", accent: false, beat: "",  sub: "l" }
+    ]
+  },
+  {
+    id: 23,
+    name: "Double Stroke Triplets",
+    category: "Pillar 5: Triplets & Syncopation",
+    timeSignature: [4, 4],
+    subdivision: "triplet",
+    notesPerBeat: 3,
+    defaultBpm: 50,
+    targetBpm: 110,
+    description: "Double strokes mapped onto triplet grids: RR-L LR-R LL-R RL-L. Creates a syncopated rolling wave.",
+    techniqueTip: "Diddles cross over beat boundaries. Keep your internal metronome locked on quarter notes.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "t" },
+      { hand: "L", accent: false, beat: "",  sub: "l" },
+      { hand: "L", accent: true,  beat: "2", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "t" },
+      { hand: "R", accent: false, beat: "",  sub: "l" },
+      { hand: "L", accent: true,  beat: "3", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "t" },
+      { hand: "R", accent: false, beat: "",  sub: "l" },
+      { hand: "R", accent: true,  beat: "4", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "t" },
+      { hand: "L", accent: false, beat: "",  sub: "l" }
+    ]
+  },
+  {
+    id: 24,
+    name: "The Herta Rudiment",
+    category: "Pillar 5: Triplets & Syncopation",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 50,
+    targetBpm: 100,
+    description: "Fast 2-note burst into alternating singles: R-L-R L, R-L-R L. Essential for modern metal and gospel chops.",
+    techniqueTip: "First two notes snap rapidly with fingers, followed by relaxed wrist taps.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: true,  beat: "2", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: true,  beat: "3", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
       { hand: "L", accent: true,  beat: "4", sub: "" },
       { hand: "R", accent: false, beat: "",  sub: "e" },
       { hand: "L", accent: false, beat: "",  sub: "&" },
@@ -193,112 +688,160 @@ export const EXERCISES = [
     ]
   },
   {
-    id: 7,
-    name: "Inverted Paradiddle",
-    category: "Rudiment Variation",
-    timeSignature: [4, 4],
-    subdivision: "sixteenth",
-    notesPerBeat: 4,
-    defaultBpm: 45,
-    targetBpm: 95,
-    description: "Shift the double stroke to the middle: R-L-L-R followed by L-R-R-L. Crucial for smooth drum fills.",
-    techniqueTip: "Keep the inner double strokes (LL / RR) feather-light so the outer accents ring clearly.",
-    pattern: [
-      { hand: "R", accent: true,  beat: "1", sub: "" },
-      { hand: "L", accent: false, beat: "",  sub: "e" },
-      { hand: "L", accent: false, beat: "",  sub: "&" },
-      { hand: "R", accent: false, beat: "",  sub: "a" },
-
-      { hand: "L", accent: true,  beat: "2", sub: "" },
-      { hand: "R", accent: false, beat: "",  sub: "e" },
-      { hand: "R", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" },
-
-      { hand: "R", accent: true,  beat: "3", sub: "" },
-      { hand: "L", accent: false, beat: "",  sub: "e" },
-      { hand: "L", accent: false, beat: "",  sub: "&" },
-      { hand: "R", accent: false, beat: "",  sub: "a" },
-
-      { hand: "L", accent: true,  beat: "4", sub: "" },
-      { hand: "R", accent: false, beat: "",  sub: "e" },
-      { hand: "R", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" }
-    ]
-  },
-  {
-    id: 8,
-    name: "Paradiddle-Diddle",
-    category: "Six-Stroke Rudiment",
+    id: 25,
+    name: "6/8 Bell Pattern / Afro-Cuban Flow",
+    category: "Pillar 5: Triplets & Syncopation",
     timeSignature: [3, 4],
     subdivision: "sixteenth",
     notesPerBeat: 4,
     defaultBpm: 55,
     targetBpm: 110,
-    description: "Pattern: R-L-R-R-L-L. Notice the same hand leads every time! Ideal for syncopated linear grooves.",
-    techniqueTip: "Accent the first stroke (R), tap the second (L), then let two sets of doubles roll smoothly (RR LL).",
+    description: "Syncopated Latin clave sticking: R-L-R-R-L-R in a swinging 6/8 polyrhythm.",
+    techniqueTip: "Emphasize the accents to feel the afro-cuban bell curve inside the sticking.",
     pattern: [
       { hand: "R", accent: true,  beat: "1", sub: "" },
       { hand: "L", accent: false, beat: "",  sub: "e" },
-      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: true,  beat: "",  sub: "&" },
       { hand: "R", accent: false, beat: "",  sub: "a" },
-
-      { hand: "L", accent: false, beat: "2", sub: "" },
-      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: true,  beat: "2", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
       { hand: "R", accent: true,  beat: "",  sub: "&" },
       { hand: "L", accent: false, beat: "",  sub: "a" },
-
       { hand: "R", accent: false, beat: "3", sub: "" },
-      { hand: "R", accent: false, beat: "",  sub: "e" },
-      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: true,  beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
       { hand: "L", accent: false, beat: "",  sub: "a" }
     ]
   },
   {
-    id: 9,
-    name: "Single Stroke Triplet Flow",
-    category: "Triplet Subdivisions",
+    id: 26,
+    name: "Triplet Paradiddle",
+    category: "Pillar 5: Triplets & Syncopation",
     timeSignature: [4, 4],
     subdivision: "triplet",
     notesPerBeat: 3,
-    defaultBpm: 55,
-    targetBpm: 115,
-    description: "Three notes per beat: 1-trip-let, 2-trip-let. The lead hand naturally alternates on each beat.",
-    techniqueTip: "Feel the circular waltz-like rhythm. Beat 1 leads with Right, Beat 2 leads with Left, Beat 3 with Right, Beat 4 with Left.",
+    defaultBpm: 50,
+    targetBpm: 110,
+    description: "Superimposes paradiddle diddles onto triplet pulses: R-L-R R-L-R | L-R-L L-R-L.",
+    techniqueTip: "The accent shifts across the beat. Stay completely relaxed and trust the sticking.",
     pattern: [
-      // Beat 1: R L R
       { hand: "R", accent: true,  beat: "1", sub: "" },
       { hand: "L", accent: false, beat: "",  sub: "t" },
       { hand: "R", accent: false, beat: "",  sub: "l" },
-
-      // Beat 2: L R L
-      { hand: "L", accent: true,  beat: "2", sub: "" },
-      { hand: "R", accent: false, beat: "",  sub: "t" },
-      { hand: "L", accent: false, beat: "",  sub: "l" },
-
-      // Beat 3: R L R
-      { hand: "R", accent: true,  beat: "3", sub: "" },
+      { hand: "R", accent: true,  beat: "2", sub: "" },
       { hand: "L", accent: false, beat: "",  sub: "t" },
       { hand: "R", accent: false, beat: "",  sub: "l" },
-
-      // Beat 4: L R L
+      { hand: "L", accent: true,  beat: "3", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "t" },
+      { hand: "L", accent: false, beat: "",  sub: "l" },
       { hand: "L", accent: true,  beat: "4", sub: "" },
       { hand: "R", accent: false, beat: "",  sub: "t" },
       { hand: "L", accent: false, beat: "",  sub: "l" }
     ]
   },
+
+  // ==========================================
+  // PILLAR 6: DYNAMICS & HYBRID ENDURANCE (27-30)
+  // ==========================================
   {
-    id: 10,
-    name: "The Pad Pyramid (Ultimate Daily Workout)",
-    category: "Endurance & Hybrid Combo",
+    id: 27,
+    name: "Accent & Tap (Downstroke / Upstroke)",
+    category: "Pillar 6: Dynamics & Mastery",
     timeSignature: [4, 4],
     subdivision: "sixteenth",
     notesPerBeat: 4,
     defaultBpm: 50,
-    targetBpm: 90,
-    description: "Combines 1 bar of Singles, 1 bar of Doubles, and 2 bars of Paradiddles into a seamless endurance routine.",
-    techniqueTip: "Transition smoothly between the three rudiments without changing your tempo or body posture.",
+    targetBpm: 100,
+    description: "Dynamic contrast: Accents on 1, 2, 3, 4 with quiet inner taps. >R l r l  >L r l r.",
+    techniqueTip: "Downstrokes stop low (1 inch) after accent. Upstrokes start low and rise high to prepare the next accent.",
     pattern: [
-      // Measure 1: Singles (16 notes)
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: true,  beat: "2", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: true,  beat: "3", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "L", accent: true,  beat: "4", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: false, beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+  {
+    id: 28,
+    name: "Offbeat Accent Shift ('e' & 'a')",
+    category: "Pillar 6: Dynamics & Mastery",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 45,
+    targetBpm: 90,
+    description: "Shifts the accent to the upbeat 16ths: r >L r l  l >R l r. Builds deep groove pocket stability.",
+    techniqueTip: "Don't rush the downbeat! Resist the urge to accent on beat 1.",
+    pattern: [
+      { hand: "R", accent: false, beat: "1", sub: "" },
+      { hand: "L", accent: true,  beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "2", sub: "" },
+      { hand: "L", accent: true,  beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "3", sub: "" },
+      { hand: "L", accent: true,  beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" },
+      { hand: "R", accent: false, beat: "4", sub: "" },
+      { hand: "L", accent: true,  beat: "",  sub: "e" },
+      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: false, beat: "",  sub: "a" }
+    ]
+  },
+  {
+    id: 29,
+    name: "Moeller 3-Note Whip",
+    category: "Pillar 6: Dynamics & Mastery",
+    timeSignature: [4, 4],
+    subdivision: "triplet",
+    notesPerBeat: 3,
+    defaultBpm: 50,
+    targetBpm: 115,
+    description: "The Moeller method whip: Whip -> Tap -> Upstroke. >R r r  >L l l in triplets.",
+    techniqueTip: "One single arm drop generates 3 smooth notes using natural rebound and finger catching.",
+    pattern: [
+      { hand: "R", accent: true,  beat: "1", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "t" },
+      { hand: "R", accent: false, beat: "",  sub: "l" },
+      { hand: "L", accent: true,  beat: "2", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "t" },
+      { hand: "L", accent: false, beat: "",  sub: "l" },
+      { hand: "R", accent: true,  beat: "3", sub: "" },
+      { hand: "R", accent: false, beat: "",  sub: "t" },
+      { hand: "R", accent: false, beat: "",  sub: "l" },
+      { hand: "L", accent: true,  beat: "4", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "t" },
+      { hand: "L", accent: false, beat: "",  sub: "l" }
+    ]
+  },
+  {
+    id: 30,
+    name: "Grand Master Pad Workout",
+    category: "Pillar 6: Dynamics & Mastery",
+    timeSignature: [4, 4],
+    subdivision: "sixteenth",
+    notesPerBeat: 4,
+    defaultBpm: 50,
+    targetBpm: 95,
+    description: "The ultimate pad challenge: 1 bar Singles -> 1 bar Doubles -> 1 bar Paradiddles -> 1 bar Flams.",
+    techniqueTip: "Maintain relaxed posture and steady volume throughout the seamless rudiment transitions.",
+    pattern: [
+      // Bar 1: Singles
       { hand: "R", accent: true,  beat: "1", sub: "" },
       { hand: "L", accent: false, beat: "",  sub: "e" },
       { hand: "R", accent: false, beat: "",  sub: "&" },
@@ -307,25 +850,8 @@ export const EXERCISES = [
       { hand: "L", accent: false, beat: "",  sub: "e" },
       { hand: "R", accent: false, beat: "",  sub: "&" },
       { hand: "L", accent: false, beat: "",  sub: "a" },
-      { hand: "R", accent: false, beat: "3", sub: "" },
-      { hand: "L", accent: false, beat: "",  sub: "e" },
-      { hand: "R", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" },
-      { hand: "R", accent: false, beat: "4", sub: "" },
-      { hand: "L", accent: false, beat: "",  sub: "e" },
-      { hand: "R", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" },
-
-      // Measure 2: Doubles (16 notes)
-      { hand: "R", accent: true,  beat: "1", sub: "" },
-      { hand: "R", accent: false, beat: "",  sub: "e" },
-      { hand: "L", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" },
-      { hand: "R", accent: false, beat: "2", sub: "" },
-      { hand: "R", accent: false, beat: "",  sub: "e" },
-      { hand: "L", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" },
-      { hand: "R", accent: false, beat: "3", sub: "" },
+      // Bar 2: Doubles
+      { hand: "R", accent: true,  beat: "3", sub: "" },
       { hand: "R", accent: false, beat: "",  sub: "e" },
       { hand: "L", accent: false, beat: "",  sub: "&" },
       { hand: "L", accent: false, beat: "",  sub: "a" },
@@ -333,8 +859,7 @@ export const EXERCISES = [
       { hand: "R", accent: false, beat: "",  sub: "e" },
       { hand: "L", accent: false, beat: "",  sub: "&" },
       { hand: "L", accent: false, beat: "",  sub: "a" },
-
-      // Measure 3: Paradiddles (16 notes)
+      // Bar 3: Paradiddles
       { hand: "R", accent: true,  beat: "1", sub: "" },
       { hand: "L", accent: false, beat: "",  sub: "e" },
       { hand: "R", accent: false, beat: "",  sub: "&" },
@@ -343,14 +868,56 @@ export const EXERCISES = [
       { hand: "R", accent: false, beat: "",  sub: "e" },
       { hand: "L", accent: false, beat: "",  sub: "&" },
       { hand: "L", accent: false, beat: "",  sub: "a" },
+      // Bar 4: Flams & Tap combo
       { hand: "R", accent: true,  beat: "3", sub: "" },
       { hand: "L", accent: false, beat: "",  sub: "e" },
-      { hand: "R", accent: false, beat: "",  sub: "&" },
+      { hand: "L", accent: true,  beat: "",  sub: "&" },
       { hand: "R", accent: false, beat: "",  sub: "a" },
-      { hand: "L", accent: true,  beat: "4", sub: "" },
-      { hand: "R", accent: false, beat: "",  sub: "e" },
-      { hand: "L", accent: false, beat: "",  sub: "&" },
-      { hand: "L", accent: false, beat: "",  sub: "a" }
+      { hand: "R", accent: true,  beat: "4", sub: "" },
+      { hand: "L", accent: false, beat: "",  sub: "e" },
+      { hand: "L", accent: true,  beat: "",  sub: "&" },
+      { hand: "R", accent: false, beat: "",  sub: "a" }
     ]
+  }
+];
+
+/**
+ * Curated Preset Workout Combos
+ */
+export const COMBO_PRESETS = [
+  {
+    id: "essential-pyramid",
+    name: "Essential Rudiment Pyramid",
+    description: "The classic daily warm-up: Singles (#1) → Doubles (#6) → Paradiddles (#11).",
+    barsPerExercise: 4,
+    exerciseIds: [1, 6, 11]
+  },
+  {
+    id: "wrist-isolation",
+    name: "Wrist Warm-Up & Speed Isolation",
+    description: "Eight on a Hand (#2) → Four on a Hand (#3) → Stone Killer (#5).",
+    barsPerExercise: 2,
+    exerciseIds: [2, 3, 5]
+  },
+  {
+    id: "paradiddle-circuit",
+    name: "Paradiddle Mastery Circuit",
+    description: "Single (#11) → Double (#12) → Inverted (#14) → Paradiddle-Diddle (#15).",
+    barsPerExercise: 4,
+    exerciseIds: [11, 12, 14, 15]
+  },
+  {
+    id: "flam-control",
+    name: "Flam Dynamics & Control",
+    description: "Alternating Flams (#17) → Flam Accent (#18) → Swiss Army Triplet (#21).",
+    barsPerExercise: 4,
+    exerciseIds: [17, 18, 21]
+  },
+  {
+    id: "speed-endurance",
+    name: "Speed & Flow Endurance",
+    description: "Single 16ths (#4) → 6-Stroke Roll (#8) → Triplet Flow (#22) → Grand Master (#30).",
+    barsPerExercise: 4,
+    exerciseIds: [4, 8, 22, 30]
   }
 ];
