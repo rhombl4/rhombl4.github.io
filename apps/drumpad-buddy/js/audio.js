@@ -28,6 +28,27 @@ export class AudioEngine {
     // Callback when a note is rendered visually
     this.onNoteTrigger = null; 
     this.onBeatOne = null;
+
+    // iOS AudioContext unlock and visibility resume handlers
+    this.setupIOSAudioLifecycle();
+  }
+
+  setupIOSAudioLifecycle() {
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && this.audioCtx && this.isPlaying) {
+        this.audioCtx.resume();
+      }
+    });
+
+    const unlock = () => {
+      this.ensureAudioContext();
+      window.removeEventListener('touchstart', unlock);
+      window.removeEventListener('touchend', unlock);
+      window.removeEventListener('pointerdown', unlock);
+    };
+    window.addEventListener('touchstart', unlock, { passive: true });
+    window.addEventListener('touchend', unlock, { passive: true });
+    window.addEventListener('pointerdown', unlock, { passive: true });
   }
 
   /**

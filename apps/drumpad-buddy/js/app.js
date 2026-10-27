@@ -293,6 +293,11 @@ class DrumPadApp {
       try {
         this.wakeLock = await navigator.wakeLock.request('screen');
         this.dom.wakeLockBtn.classList.add('active');
+        this.wakeLock.addEventListener('release', () => {
+          if (!this.audio.isPlaying) {
+            this.dom.wakeLockBtn.classList.remove('active');
+          }
+        });
       } catch (err) {
         console.warn('Wake Lock request error:', err);
       }
@@ -308,6 +313,13 @@ class DrumPadApp {
   }
 
   bindEvents() {
+    // Re-acquire WakeLock on iOS when app becomes visible again while practicing
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && this.audio.isPlaying) {
+        this.requestWakeLock();
+      }
+    });
+
     // Play/Pause Action
     this.dom.playPauseBtn.addEventListener('click', () => this.togglePlay());
 
@@ -435,4 +447,11 @@ class DrumPadApp {
 // Start application once DOM is ready
 window.addEventListener('DOMContentLoaded', () => {
   new DrumPadApp();
+
+  // Register PWA Service Worker for offline iOS/iPad caching
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch((err) => {
+      console.warn('Service Worker registration skipped:', err);
+    });
+  }
 });
