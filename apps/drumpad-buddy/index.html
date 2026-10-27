@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0a0f1d">
+  <title>Drummel - Drum Practice Pad Companion</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- Top Header -->
+    <header class="header">
+      <div class="logo-area">
+        <div class="logo-icon" aria-hidden="true">🥁</div>
+        <div>
+          <h1 class="logo-title">Drummel</h1>
+          <p class="logo-subtitle">Stick & Pad Beginner Companion</p>
+        </div>
+      </div>
+
+      <div class="header-badges">
+        <div class="badge badge-streak" id="streakBadge" title="Consecutive Practice Days">
+          🔥 <span id="streakCount">1</span> Day Streak
+        </div>
+        <div class="badge" id="todayBadge" title="Total Practice Today">
+          ⏱️ <span id="todayMinutes">0</span>m today
+        </div>
+        <button class="icon-btn" id="wakeLockBtn" title="Keep Screen Awake (Wake Lock)" aria-label="Toggle Screen Wake Lock">
+          💡
+        </button>
+        <button class="icon-btn" id="guideBtn" title="View 10-Exercise Curriculum" aria-label="Open Curriculum Guide">
+          📖
+        </button>
+      </div>
+    </header>
+
+    <!-- Exercise Selector & Tip Header -->
+    <section class="exercise-card">
+      <div class="exercise-top-row">
+        <div class="exercise-selector-wrap">
+          <button class="nav-arrow-btn" id="prevExBtn" title="Previous Exercise ([)">◀</button>
+          <select class="exercise-select" id="exerciseSelect" aria-label="Select Exercise">
+            <!-- Populated dynamically via JS -->
+          </select>
+          <button class="nav-arrow-btn" id="nextExBtn" title="Next Exercise (])">▶</button>
+        </div>
+
+        <div class="exercise-meta-tags">
+          <span class="tag tag-highlight" id="exerciseSubdivision">16th Notes</span>
+          <span class="tag" id="exerciseCategory">Rudiment Core</span>
+          <span class="tag" id="targetBpmTag">Target: 110 BPM</span>
+        </div>
+      </div>
+
+      <div class="tip-banner">
+        <span class="tip-label">Technique Tip:</span>
+        <span id="techniqueTipText">Keep wrists relaxed and allow the stick to bounce back freely.</span>
+      </div>
+    </section>
+
+    <!-- Interactive Sticking Visualizer (The Hero Stage) -->
+    <main class="stage-card">
+      <div class="stage-header">
+        <div class="beat-pulse-indicator" id="pulseIndicator">
+          <div class="pulse-dot" id="pulseDot"></div>
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-subtle);">BEAT ENGINE</span>
+        </div>
+
+        <div class="hand-legend">
+          <div class="legend-item">
+            <div class="legend-dot-r"></div>
+            <span>Right Hand (R)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot-l"></div>
+            <span>Left Hand (L)</span>
+          </div>
+          <div class="legend-item" style="color: var(--accent-gold);">
+            <span style="font-weight: 900;">&gt;</span>
+            <span>Accent</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes Grid (Measure & Beat Groups) -->
+      <div class="pattern-display-container" id="patternContainer">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </main>
+
+    <!-- Control Dashboard (Metronome & Practice Timer) -->
+    <div class="dashboard-grid">
+      
+      <!-- Metronome Panel -->
+      <section class="control-panel">
+        <div class="panel-header">
+          <span class="panel-title">Precision Metronome</span>
+          <button class="icon-btn" id="muteBtn" title="Mute / Unmute Metronome (M)" aria-label="Mute Audio">
+            🔊
+          </button>
+        </div>
+
+        <div class="bpm-display-row">
+          <span class="bpm-number" id="bpmValue">60</span>
+          <span class="bpm-unit">BPM</span>
+        </div>
+
+        <div class="tempo-adjust-bar">
+          <button class="bpm-btn" id="bpmMinus5" title="Minus 5 BPM">-5</button>
+          <button class="bpm-btn" id="bpmMinus1" title="Minus 1 BPM">-1</button>
+          <button class="tap-tempo-btn" id="tapTempoBtn" title="Tap Tempo (T)">Tap Tempo</button>
+          <button class="bpm-btn" id="bpmPlus1" title="Plus 1 BPM">+1</button>
+          <button class="bpm-btn" id="bpmPlus5" title="Plus 5 BPM">+5</button>
+        </div>
+
+        <div class="tempo-slider-wrap">
+          <input type="range" min="40" max="220" value="60" class="tempo-slider" id="bpmSlider" aria-label="Tempo Slider">
+          <div class="tempo-slider-labels">
+            <span>40 Grave</span>
+            <span>80 Moderato</span>
+            <span>120 Allegro</span>
+            <span>220 Presto</span>
+          </div>
+        </div>
+
+        <div class="sound-settings-row">
+          <label for="soundSelect" style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Click Sound:</label>
+          <select id="soundSelect" class="sound-select">
+            <option value="woodblock" selected>Warm Woodblock</option>
+            <option value="padTap">Practice Pad Snare Tap</option>
+            <option value="click">Digital Beep</option>
+            <option value="cowbell">Percussion Cowbell</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Practice Timer Panel -->
+      <section class="control-panel">
+        <div class="panel-header">
+          <span class="panel-title">Exercise Timer</span>
+          <div style="display: flex; gap: 0.35rem;">
+            <button class="icon-btn" id="timerModeBtn" title="Toggle Countdown / Stopwatch Mode">
+              ⏳
+            </button>
+            <button class="icon-btn" id="timerResetBtn" title="Reset Timer (R)">
+              🔄
+            </button>
+          </div>
+        </div>
+
+        <div class="timer-display-wrap">
+          <div class="timer-number" id="timerDisplay">02:00</div>
+          <div class="timer-progress-bar">
+            <div class="timer-progress-fill" id="timerProgress"></div>
+          </div>
+        </div>
+
+        <div class="timer-presets" id="timerPresets">
+          <button class="preset-btn" data-min="1">1 min</button>
+          <button class="preset-btn active" data-min="2">2 min</button>
+          <button class="preset-btn" data-min="3">3 min</button>
+          <button class="preset-btn" data-min="5">5 min</button>
+        </div>
+
+        <div style="font-size: 0.8rem; text-align: center; color: var(--text-subtle);">
+          Auto-stops metronome and plays a victory chime on finish.
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Master Action Bar -->
+    <div class="action-bar">
+      <button class="play-pause-btn" id="playPauseBtn" aria-label="Start or Pause Exercise">
+        <span id="playIcon">▶</span>
+        <span id="playText">START PRACTICE (SPACE)</span>
+      </button>
+    </div>
+
+    <!-- Keyboard Shortcuts Guidance -->
+    <footer class="footer-shortcuts">
+      <div class="shortcut-item">
+        <span class="kbd">Space</span>
+        <span>Play / Pause</span>
+      </div>
+      <div class="shortcut-item">
+        <span class="kbd">← / →</span>
+        <span>BPM ±1</span>
+      </div>
+      <div class="shortcut-item">
+        <span class="kbd">↑ / ↓</span>
+        <span>BPM ±5</span>
+      </div>
+      <div class="shortcut-item">
+        <span class="kbd">T</span>
+        <span>Tap Tempo</span>
+      </div>
+      <div class="shortcut-item">
+        <span class="kbd">[ / ]</span>
+        <span>Prev / Next Exercise</span>
+      </div>
+      <div class="shortcut-item">
+        <span class="kbd">M</span>
+        <span>Mute</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Curriculum Guide Modal -->
+  <div class="modal-overlay" id="guideModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle" style="font-size: 1.2rem; font-weight: 800;">10-Exercise Pad Curriculum</h2>
+        <button class="icon-btn" id="closeGuideBtn" aria-label="Close Modal">✕</button>
+      </div>
+      <div class="modal-body" id="curriculumList">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
