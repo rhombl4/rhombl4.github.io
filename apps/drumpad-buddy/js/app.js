@@ -45,7 +45,6 @@ class DrumPadApp {
 
       // Stage / Pattern
       stageCard: document.getElementById('stageCard'),
-      stageTapBadge: document.getElementById('stageTapBadge'),
       patternContainer: document.getElementById('patternContainer'),
       pulseDot: document.getElementById('pulseDot'),
 
@@ -302,9 +301,6 @@ class DrumPadApp {
         this.dom.floatingPlayIcon.textContent = '⏸';
         this.dom.floatingPlayLabel.textContent = 'PAUSE';
       }
-      if (this.dom.stageTapBadge) {
-        this.dom.stageTapBadge.textContent = '⏸ Tap to Pause';
-      }
       if (this.dom.stageCard) {
         this.dom.stageCard.setAttribute('title', 'Tap anywhere on beats stage to Pause');
       }
@@ -318,9 +314,6 @@ class DrumPadApp {
         this.dom.floatingPlayBtn.classList.remove('is-playing');
         this.dom.floatingPlayIcon.textContent = '▶';
         this.dom.floatingPlayLabel.textContent = 'START';
-      }
-      if (this.dom.stageTapBadge) {
-        this.dom.stageTapBadge.textContent = '👆 Tap to Start';
       }
       if (this.dom.stageCard) {
         this.dom.stageCard.setAttribute('title', 'Tap anywhere on beats stage to Start');

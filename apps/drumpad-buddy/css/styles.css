@@ -318,28 +318,6 @@ body {
   transform: scale(0.997);
 }
 
-.stage-tap-badge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.2rem 0.55rem;
-  border-radius: var(--radius-full);
-  background: rgba(14, 165, 233, 0.12);
-  border: 1px solid rgba(14, 165, 233, 0.3);
-  color: #38bdf8;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  transition: all 0.2s ease;
-  pointer-events: none;
-}
-
-.stage-card:hover .stage-tap-badge {
-  background: rgba(14, 165, 233, 0.22);
-  border-color: var(--right-hand);
-}
-
 .stage-header {
   display: flex;
   justify-content: space-between;
@@ -1517,10 +1495,6 @@ body {
   .play-pause-btn {
     height: 48px;
     font-size: 1.1rem;
-  }
-
-  .stage-tap-badge {
-    display: none; /* Hide tap badge in landscape to keep screen clean */
   }
 
   .floating-controls {
