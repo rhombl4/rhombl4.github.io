@@ -74,10 +74,7 @@ class DrumPadApp {
       playPauseBtn: document.getElementById('playPauseBtn'),
       playIcon: document.getElementById('playIcon'),
       playText: document.getElementById('playText'),
-      floatingControls: document.getElementById('floatingControls'),
-      floatingPlayBtn: document.getElementById('floatingPlayBtn'),
-      floatingPlayIcon: document.getElementById('floatingPlayIcon'),
-      floatingPlayLabel: document.getElementById('floatingPlayLabel'),
+      beatEngineHint: document.getElementById('beatEngineHint'),
 
       // Modals & Install
       guideModal: document.getElementById('guideModal'),
@@ -293,12 +290,20 @@ class DrumPadApp {
   }
 
   scrollToBeatEngine() {
-    if (this.dom.stageCard) {
-      this.dom.stageCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!this.dom.stageCard) return;
+    setTimeout(() => {
       try {
-        this.dom.stageCard.focus({ preventScroll: true });
-      } catch (err) {}
-    }
+        const rect = this.dom.stageCard.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+        const targetTop = Math.max(0, rect.top + scrollTop - 16);
+        window.scrollTo({
+          top: targetTop,
+          behavior: 'smooth'
+        });
+      } catch (e) {
+        this.dom.stageCard.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 60);
   }
 
   updatePlayState(isPlaying) {
@@ -306,10 +311,9 @@ class DrumPadApp {
       this.dom.playPauseBtn.classList.add('is-playing');
       this.dom.playIcon.textContent = '⏸';
       this.dom.playText.textContent = 'PAUSE PRACTICE (SPACE)';
-      if (this.dom.floatingPlayBtn) {
-        this.dom.floatingPlayBtn.classList.add('is-playing');
-        this.dom.floatingPlayIcon.textContent = '⏸';
-        this.dom.floatingPlayLabel.textContent = 'PAUSE';
+      if (this.dom.beatEngineHint) {
+        this.dom.beatEngineHint.textContent = '(tap to pause)';
+        this.dom.beatEngineHint.classList.add('is-playing');
       }
       if (this.dom.stageCard) {
         this.dom.stageCard.setAttribute('title', 'Tap anywhere on beats stage to Pause');
@@ -320,10 +324,9 @@ class DrumPadApp {
       this.dom.playPauseBtn.classList.remove('is-playing');
       this.dom.playIcon.textContent = '▶';
       this.dom.playText.textContent = 'START PRACTICE (SPACE)';
-      if (this.dom.floatingPlayBtn) {
-        this.dom.floatingPlayBtn.classList.remove('is-playing');
-        this.dom.floatingPlayIcon.textContent = '▶';
-        this.dom.floatingPlayLabel.textContent = 'START';
+      if (this.dom.beatEngineHint) {
+        this.dom.beatEngineHint.textContent = '(tap to start)';
+        this.dom.beatEngineHint.classList.remove('is-playing');
       }
       if (this.dom.stageCard) {
         this.dom.stageCard.setAttribute('title', 'Tap anywhere on beats stage to Start');
@@ -570,32 +573,6 @@ class DrumPadApp {
     }
   }
 
-  setupFloatingControls() {
-    if (!this.dom.floatingControls || !this.dom.playPauseBtn) return;
-
-    const setVisibility = (isOutOfView) => {
-      this.dom.floatingControls.classList.toggle('is-visible', isOutOfView);
-    };
-
-    if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          setVisibility(!entry.isIntersecting);
-        });
-      }, {
-        root: null,
-        threshold: 0.15
-      });
-      observer.observe(this.dom.playPauseBtn);
-    } else {
-      window.addEventListener('scroll', () => {
-        const rect = this.dom.playPauseBtn.getBoundingClientRect();
-        const isOutOfView = (rect.top > window.innerHeight || rect.bottom < 0);
-        setVisibility(isOutOfView);
-      }, { passive: true });
-    }
-  }
-
   bindEvents() {
     // Re-acquire WakeLock on iOS when app becomes visible again while practicing
     document.addEventListener('visibilitychange', () => {
@@ -606,14 +583,6 @@ class DrumPadApp {
 
     // Play/Pause Action from Main Button
     this.dom.playPauseBtn.addEventListener('click', () => this.togglePlay());
-
-    // Play/Pause Action from Floating Button
-    if (this.dom.floatingPlayBtn) {
-      this.dom.floatingPlayBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.togglePlay();
-      });
-    }
 
     // Tap/Click on Interactive Beats Stage to Play/Pause
     if (this.dom.stageCard) {
@@ -660,9 +629,6 @@ class DrumPadApp {
         }
       });
     }
-
-    // Setup IntersectionObserver for floating transport controls
-    this.setupFloatingControls();
 
     // Exercise Navigation
     this.dom.exerciseSelect.addEventListener('change', (e) => {
