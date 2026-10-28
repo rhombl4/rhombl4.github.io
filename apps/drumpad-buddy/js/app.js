@@ -287,7 +287,17 @@ class DrumPadApp {
       this.updatePlayState(true);
       this.timer.start();
       this.requestWakeLock();
+      this.scrollToBeatEngine();
       await this.audio.start();
+    }
+  }
+
+  scrollToBeatEngine() {
+    if (this.dom.stageCard) {
+      this.dom.stageCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      try {
+        this.dom.stageCard.focus({ preventScroll: true });
+      } catch (err) {}
     }
   }
 
@@ -711,6 +721,7 @@ class DrumPadApp {
         this.timer.start();
         this.updatePlayState(true);
         this.requestWakeLock();
+        this.scrollToBeatEngine();
         await this.audio.start();
       });
     }
