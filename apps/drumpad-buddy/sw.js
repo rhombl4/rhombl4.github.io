@@ -1,9 +1,9 @@
-const CACHE_NAME = 'drumpad-v12';
+const CACHE_NAME = 'drumpad-v13';
 const ASSETS_TO_CACHE = [
   './',
   'index.html',
   'css/styles.css',
-  'css/styles.css?v=10',
+  'css/styles.css?v=11',
   'js/app.js',
   'js/audio.js',
   'js/exercises.js',

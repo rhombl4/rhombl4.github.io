@@ -334,18 +334,39 @@ body {
   gap: 0.6rem;
 }
 
-.beat-engine-hint {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  letter-spacing: 0.02em;
-  opacity: 0.85;
-  transition: color 0.2s ease, opacity 0.2s ease;
+.stage-timer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.75rem;
+  background: rgba(236, 72, 153, 0.1);
+  border: 1px solid rgba(236, 72, 153, 0.3);
+  border-radius: var(--radius-full);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--accent-pink);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  box-shadow: 0 0 12px rgba(236, 72, 153, 0.12);
+  transition: all 0.2s ease;
+  user-select: none;
 }
 
-.beat-engine-hint.is-playing {
-  color: var(--accent-gold);
-  opacity: 0.95;
+.stage-timer-badge.is-running {
+  background: rgba(236, 72, 153, 0.18);
+  border-color: rgba(236, 72, 153, 0.6);
+  box-shadow: 0 0 18px rgba(236, 72, 153, 0.35);
+  color: #ffffff;
+}
+
+.stage-timer-icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.stage-timer-value {
+  line-height: 1;
 }
 
 .pulse-dot {
@@ -753,6 +774,36 @@ body {
 .timer-display-wrap {
   text-align: center;
   padding: 0.5rem 0;
+}
+
+.timer-display-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.timer-mode-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  font-size: 1.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.timer-mode-btn:hover {
+  border-color: var(--accent-pink);
+  transform: scale(1.08);
+}
+
+.timer-mode-btn:active {
+  transform: scale(0.92);
 }
 
 .timer-number {
@@ -1358,6 +1409,11 @@ body {
   .stage-header {
     margin-bottom: 0.4rem;
     padding-bottom: 0.3rem;
+  }
+
+  .stage-timer-badge {
+    padding: 0.2rem 0.55rem;
+    font-size: 0.85rem;
   }
 
   .stage-footer {

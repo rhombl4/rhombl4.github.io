@@ -47,6 +47,9 @@ class DrumPadApp {
       stageCard: document.getElementById('stageCard'),
       patternContainer: document.getElementById('patternContainer'),
       pulseDot: document.getElementById('pulseDot'),
+      stageTimerBadge: document.getElementById('stageTimerBadge'),
+      stageTimerDisplay: document.getElementById('stageTimerDisplay'),
+      stageTimerIcon: document.getElementById('stageTimerIcon'),
 
       // Metronome Controls
       bpmValue: document.getElementById('bpmValue'),
@@ -64,7 +67,6 @@ class DrumPadApp {
       timerProgress: document.getElementById('timerProgress'),
       timerModeBtn: document.getElementById('timerModeBtn'),
       timerResetBtn: document.getElementById('timerResetBtn'),
-      timerResetBtn2: document.getElementById('timerResetBtn2'),
       timerStartBtn: document.getElementById('timerStartBtn'),
       timerPauseBtn: document.getElementById('timerPauseBtn'),
       timerStopBtn: document.getElementById('timerStopBtn'),
@@ -74,7 +76,6 @@ class DrumPadApp {
       playPauseBtn: document.getElementById('playPauseBtn'),
       playIcon: document.getElementById('playIcon'),
       playText: document.getElementById('playText'),
-      beatEngineHint: document.getElementById('beatEngineHint'),
 
       // Modals & Install
       guideModal: document.getElementById('guideModal'),
@@ -124,6 +125,9 @@ class DrumPadApp {
     this.timer.onTick = (state) => {
       this.dom.timerDisplay.textContent = state.displayTime;
       this.dom.timerProgress.style.width = `${state.progressPercent}%`;
+      if (this.dom.stageTimerDisplay) {
+        this.dom.stageTimerDisplay.textContent = state.displayTime;
+      }
     };
     this.timer.triggerTick();
 
@@ -311,12 +315,11 @@ class DrumPadApp {
       this.dom.playPauseBtn.classList.add('is-playing');
       this.dom.playIcon.textContent = '⏸';
       this.dom.playText.textContent = 'PAUSE PRACTICE (SPACE)';
-      if (this.dom.beatEngineHint) {
-        this.dom.beatEngineHint.textContent = '(tap to pause)';
-        this.dom.beatEngineHint.classList.add('is-playing');
-      }
       if (this.dom.stageCard) {
         this.dom.stageCard.setAttribute('title', 'Tap anywhere on beats stage to Pause');
+      }
+      if (this.dom.stageTimerBadge) {
+        this.dom.stageTimerBadge.classList.add('is-running');
       }
       if (this.dom.timerStartBtn) this.dom.timerStartBtn.classList.add('active');
       if (this.dom.timerPauseBtn) this.dom.timerPauseBtn.classList.remove('active');
@@ -324,12 +327,11 @@ class DrumPadApp {
       this.dom.playPauseBtn.classList.remove('is-playing');
       this.dom.playIcon.textContent = '▶';
       this.dom.playText.textContent = 'START PRACTICE (SPACE)';
-      if (this.dom.beatEngineHint) {
-        this.dom.beatEngineHint.textContent = '(tap to start)';
-        this.dom.beatEngineHint.classList.remove('is-playing');
-      }
       if (this.dom.stageCard) {
         this.dom.stageCard.setAttribute('title', 'Tap anywhere on beats stage to Start');
+      }
+      if (this.dom.stageTimerBadge) {
+        this.dom.stageTimerBadge.classList.remove('is-running');
       }
       if (this.dom.timerStartBtn) this.dom.timerStartBtn.classList.remove('active');
       // Clear visual active highlight
@@ -677,9 +679,11 @@ class DrumPadApp {
       });
     });
 
-    this.dom.timerResetBtn.addEventListener('click', () => {
-      this.timer.reset();
-    });
+    if (this.dom.timerResetBtn) {
+      this.dom.timerResetBtn.addEventListener('click', () => {
+        this.timer.reset();
+      });
+    }
 
     // Classic Timer Transport Controls (▶ Arrow, ⏸ Two Poles, ⏹ Square, ↺ Reset)
     if (this.dom.timerStartBtn) {
@@ -708,18 +712,17 @@ class DrumPadApp {
       });
     }
 
-    if (this.dom.timerResetBtn2) {
-      this.dom.timerResetBtn2.addEventListener('click', () => {
-        this.timer.reset();
+    if (this.dom.timerModeBtn) {
+      this.dom.timerModeBtn.addEventListener('click', () => {
+        const newMode = this.timer.mode === 'countdown' ? 'stopwatch' : 'countdown';
+        this.timer.setMode(newMode);
+        this.dom.timerModeBtn.textContent = newMode === 'countdown' ? '⏳' : '⏱️';
+        this.dom.timerModeBtn.title = `Current Mode: ${newMode.toUpperCase()}`;
+        if (this.dom.stageTimerIcon) {
+          this.dom.stageTimerIcon.textContent = newMode === 'countdown' ? '⏳' : '⏱️';
+        }
       });
     }
-
-    this.dom.timerModeBtn.addEventListener('click', () => {
-      const newMode = this.timer.mode === 'countdown' ? 'stopwatch' : 'countdown';
-      this.timer.setMode(newMode);
-      this.dom.timerModeBtn.textContent = newMode === 'countdown' ? '⏳' : '⏱️';
-      this.dom.timerModeBtn.title = `Current Mode: ${newMode.toUpperCase()}`;
-    });
 
     // Wake Lock Toggle Button
     this.dom.wakeLockBtn.addEventListener('click', () => {

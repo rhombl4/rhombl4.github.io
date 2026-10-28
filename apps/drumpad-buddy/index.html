@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="icons/icon-192.png">
   <link rel="manifest" href="manifest.json">
   <title>DrumPad Buddy - Drum Practice Pad Helper & Metronome</title>
-  <link rel="stylesheet" href="css/styles.css?v=10">
+  <link rel="stylesheet" href="css/styles.css?v=11">
 </head>
 <body>
 
@@ -95,7 +95,10 @@
         <div class="beat-pulse-indicator" id="pulseIndicator">
           <div class="pulse-dot" id="pulseDot"></div>
           <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-subtle);">BEAT ENGINE</span>
-          <span class="beat-engine-hint" id="beatEngineHint">(tap to start)</span>
+        </div>
+        <div class="stage-timer-badge" id="stageTimerBadge" title="Practice Session Time">
+          <span class="stage-timer-icon" id="stageTimerIcon">⏳</span>
+          <span class="stage-timer-value" id="stageTimerDisplay">02:00</span>
         </div>
       </div>
 
@@ -181,18 +184,15 @@
       <section class="control-panel">
         <div class="panel-header">
           <span class="panel-title">Exercise Timer</span>
-          <div style="display: flex; gap: 0.35rem;">
-            <button class="icon-btn" id="timerModeBtn" title="Toggle Countdown / Stopwatch Mode">
-              ⏳
-            </button>
-            <button class="icon-btn" id="timerResetBtn" title="Reset Timer (R)">
-              🔄
-            </button>
-          </div>
         </div>
 
         <div class="timer-display-wrap">
-          <div class="timer-number" id="timerDisplay">02:00</div>
+          <div class="timer-display-row">
+            <div class="timer-number" id="timerDisplay">02:00</div>
+            <button class="icon-btn timer-mode-btn" id="timerModeBtn" title="Toggle Countdown / Stopwatch Mode (⏳ / ⏱️)" aria-label="Toggle Countdown / Stopwatch Mode">
+              ⏳
+            </button>
+          </div>
           <div class="timer-progress-bar">
             <div class="timer-progress-fill" id="timerProgress"></div>
           </div>
@@ -212,7 +212,7 @@
             <span class="transport-icon">⏹</span>
             <span class="transport-label">Stop</span>
           </button>
-          <button class="transport-btn transport-reset" id="timerResetBtn2" title="Reset Timer (↺)" aria-label="Reset Timer">
+          <button class="transport-btn transport-reset" id="timerResetBtn" title="Reset Timer (↺ / R)" aria-label="Reset Timer">
             <span class="transport-icon">↺</span>
             <span class="transport-label">Reset</span>
           </button>
