@@ -50,10 +50,7 @@ class DrumPadApp {
       stageTimerBadge: document.getElementById('stageTimerBadge'),
       stageTimerDisplay: document.getElementById('stageTimerDisplay'),
       stageTimerIcon: document.getElementById('stageTimerIcon'),
-      countInOverlay: document.getElementById('countInOverlay'),
-      countInNumber: document.getElementById('countInNumber'),
-      countInDots: document.getElementById('countInDots'),
-      countInHint: document.getElementById('countInHint'),
+      stageCountInBadge: document.getElementById('stageCountInBadge'),
 
       // Metronome Controls
       bpmValue: document.getElementById('bpmValue'),
@@ -109,7 +106,7 @@ class DrumPadApp {
   }
 
   init() {
-    this.countInEnabled = localStorage.getItem('drumpad_stick_intro_enabled') !== 'false';
+    this.countInEnabled = localStorage.getItem('drumpad_count_in_enabled') !== 'false';
     this.populateExerciseSelect();
     this.renderCurriculumModal();
     this.renderCuratedCombos();
@@ -312,13 +309,9 @@ class DrumPadApp {
       this.requestWakeLock();
       this.scrollToBeatEngine();
 
-      const currentEx = EXERCISES[this.currentExerciseIndex];
-      const countInBeats = this.countInEnabled 
-        ? ((currentEx && currentEx.timeSignature) ? currentEx.timeSignature[0] : 4)
-        : 0;
+      const countInBeats = this.countInEnabled ? 4 : 0;
 
       if (countInBeats > 0) {
-        this.setupCountInDots(countInBeats);
         this.showCountIn(1, countInBeats);
       } else {
         this.timer.start();
@@ -330,57 +323,35 @@ class DrumPadApp {
 
   toggleCountIn(forceVal = null) {
     this.countInEnabled = forceVal !== null ? forceVal : !this.countInEnabled;
-    localStorage.setItem('drumpad_stick_intro_enabled', this.countInEnabled ? 'true' : 'false');
+    localStorage.setItem('drumpad_count_in_enabled', this.countInEnabled ? 'true' : 'false');
     this.updateCountInUI();
   }
 
   updateCountInUI() {
     if (this.dom.countInToggleBtn) {
       this.dom.countInToggleBtn.classList.toggle('active', this.countInEnabled);
-      this.dom.countInToggleBtn.title = `Stick Click Intro: ${this.countInEnabled ? 'ON (1 bar lead-in)' : 'OFF (instant start)'}`;
+      this.dom.countInToggleBtn.title = `Count-In: ${this.countInEnabled ? 'ON (4 lead-in beats before pattern moves)' : 'OFF (instant start)'}`;
     }
     if (this.dom.countInCheckbox) {
       this.dom.countInCheckbox.checked = this.countInEnabled;
     }
   }
 
-  setupCountInDots(total) {
-    if (!this.dom.countInDots) return;
-    this.dom.countInDots.innerHTML = '';
-    for (let i = 1; i <= total; i++) {
-      const dot = document.createElement('span');
-      dot.className = 'count-dot';
-      dot.dataset.dot = i;
-      this.dom.countInDots.appendChild(dot);
-    }
-  }
-
-  showCountIn(count, total) {
-    if (!this.dom.countInOverlay) return;
-    this.dom.countInOverlay.style.display = 'flex';
-    if (this.dom.countInNumber) {
-      this.dom.countInNumber.textContent = count;
-      this.dom.countInNumber.classList.remove('pop');
-      void this.dom.countInNumber.offsetWidth; // Force reflow to replay pop keyframe
-      this.dom.countInNumber.classList.add('pop');
-    }
-    if (this.dom.countInDots) {
-      const dots = this.dom.countInDots.querySelectorAll('.count-dot');
-      dots.forEach((dot, idx) => {
-        dot.classList.toggle('active', idx < count);
-      });
-    }
-    if (this.dom.countInHint) {
-      this.dom.countInHint.textContent = count === total ? 'Ready... PLAY!' : 'Sync tempo...';
+  showCountIn(count, total = 4) {
+    if (this.dom.stageCountInBadge) {
+      this.dom.stageCountInBadge.style.display = 'inline-flex';
+      this.dom.stageCountInBadge.textContent = `COUNT-IN: ${count} / ${total}`;
     }
     if (this.dom.pulseDot) {
+      this.dom.pulseDot.className = 'pulse-dot';
+      void this.dom.pulseDot.offsetWidth; // Reflow for animation restart
       this.dom.pulseDot.className = count === total ? 'pulse-dot pulse-downbeat' : 'pulse-dot pulse-sub';
     }
   }
 
   hideCountIn() {
-    if (this.dom.countInOverlay) {
-      this.dom.countInOverlay.style.display = 'none';
+    if (this.dom.stageCountInBadge) {
+      this.dom.stageCountInBadge.style.display = 'none';
     }
   }
 

@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="icons/icon-192.png">
   <link rel="manifest" href="manifest.json">
   <title>DrumPad Buddy - Drum Practice Pad Helper & Metronome</title>
-  <link rel="stylesheet" href="css/styles.css?v=12">
+  <link rel="stylesheet" href="css/styles.css?v=13">
 </head>
 <body>
 
@@ -95,28 +95,11 @@
         <div class="beat-pulse-indicator" id="pulseIndicator">
           <div class="pulse-dot" id="pulseDot"></div>
           <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-subtle);">BEAT ENGINE</span>
+          <span class="stage-count-in-badge" id="stageCountInBadge" style="display: none;">COUNT-IN: 1</span>
         </div>
         <div class="stage-timer-badge" id="stageTimerBadge" title="Practice Session Time">
           <span class="stage-timer-icon" id="stageTimerIcon">⏳</span>
           <span class="stage-timer-value" id="stageTimerDisplay">02:00</span>
-        </div>
-      </div>
-
-      <!-- Drummer Stick Click Count-In Overlay -->
-      <div class="count-in-overlay" id="countInOverlay" style="display: none;" aria-live="assertive">
-        <div class="count-in-box">
-          <div class="count-in-badge">
-            <span class="count-in-icon">🥢</span>
-            <span class="count-in-title">STICK INTRO SYNC</span>
-          </div>
-          <div class="count-in-number" id="countInNumber">1</div>
-          <div class="count-in-dots" id="countInDots">
-            <span class="count-dot" data-dot="1"></span>
-            <span class="count-dot" data-dot="2"></span>
-            <span class="count-dot" data-dot="3"></span>
-            <span class="count-dot" data-dot="4"></span>
-          </div>
-          <div class="count-in-hint" id="countInHint">Sync the tempo... Ready!</div>
         </div>
       </div>
 
@@ -152,9 +135,8 @@
         <div class="panel-header">
           <span class="panel-title">Precision Metronome</span>
           <div style="display: flex; gap: 0.4rem; align-items: center;">
-            <button class="intro-toggle-btn active" id="countInToggleBtn" title="Toggle 1-Bar Stick Click Intro (Sync before starting)" aria-label="Toggle Stick Click Intro">
-              <span class="intro-icon">🥢</span>
-              <span class="intro-label">Intro</span>
+            <button class="count-in-toggle-btn active" id="countInToggleBtn" title="Toggle Count-In (4 lead-in beats before pattern starts)" aria-label="Toggle Count-In">
+              Count-In
             </button>
             <button class="icon-btn" id="muteBtn" title="Mute / Unmute Metronome (M)" aria-label="Mute Audio">
               🔊
@@ -200,15 +182,14 @@
             <option value="cyberPing">10. 808 Synth Bell / Cyber Ping</option>
             <option value="vocal">11. Human Vocal Beatbox</option>
             <option value="laugh">12. Chuckle / Cartoon Giggle</option>
-            <option value="stickClick">13. Drummer Stick Click</option>
           </select>
         </div>
 
         <div class="intro-setting-row">
-          <label class="intro-checkbox-label" for="countInCheckbox" title="Play 1-measure stick click intro before exercise starts">
+          <label class="intro-checkbox-label" for="countInCheckbox" title="Play 4 count-in clicks before exercise starts">
             <input type="checkbox" id="countInCheckbox" checked>
             <span class="custom-switch"></span>
-            <span class="intro-checkbox-text">🥢 Stick Click Intro (1 Bar Lead-In)</span>
+            <span class="intro-checkbox-text">Count-In (4 Beats)</span>
           </label>
         </div>
       </section>

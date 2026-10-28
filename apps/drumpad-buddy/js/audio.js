@@ -476,12 +476,6 @@ export class AudioEngine {
         break;
       }
 
-      case 'stickClick': {
-        // 13. Drummer Stick Click (Hickory stick on stick impact)
-        this.playStickClick(time, isBeatOne ? 1 : 2, 4);
-        break;
-      }
-
       case 'click':
       default: {
         // 3. Digital Studio Beep (Pro DAW Click)
@@ -503,70 +497,12 @@ export class AudioEngine {
   }
 
   /**
-   * Synthesize an authentic acoustic drumstick-on-drumstick count-in click
-   * Combines high-Q wood collision noise snap + hollow cylindrical wood body resonance
-   */
-  playStickClick(time, countNumber = 1, totalCount = 4) {
-    if (this.isMuted || !this.audioCtx) return;
-
-    const baseGain = this.volume;
-    const isFinalCount = (countNumber === totalCount);
-    const isDownbeat = (countNumber === 1);
-
-    // Master hit gain
-    const hitGain = this.audioCtx.createGain();
-    hitGain.connect(this.audioCtx.destination);
-
-    const maxGain = isFinalCount ? baseGain * 0.95 : (isDownbeat ? baseGain * 0.85 : baseGain * 0.72);
-    hitGain.gain.setValueAtTime(maxGain, time);
-    hitGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.045);
-
-    // 1. High transient impact noise (wood friction and collision transient)
-    const noiseBuffer = this.getNoiseBuffer(0.025);
-    if (noiseBuffer) {
-      const noise = this.audioCtx.createBufferSource();
-      noise.buffer = noiseBuffer;
-
-      const noiseFilter = this.audioCtx.createBiquadFilter();
-      noiseFilter.type = 'bandpass';
-      noiseFilter.frequency.setValueAtTime(isFinalCount ? 3300 : 2800, time);
-      noiseFilter.Q.setValueAtTime(4.5, time);
-
-      const noiseGain = this.audioCtx.createGain();
-      noiseGain.gain.setValueAtTime(baseGain * 0.75, time);
-      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.016);
-
-      noise.connect(noiseFilter);
-      noiseFilter.connect(noiseGain);
-      noiseGain.connect(hitGain);
-
-      noise.start(time);
-      noise.stop(time + 0.02);
-    }
-
-    // 2. Stick body fundamental tone (hickory stick pitch)
-    const bodyOsc = this.audioCtx.createOscillator();
-    bodyOsc.type = 'triangle';
-    const fundamental = isFinalCount ? 1220 : (isDownbeat ? 1040 : 920);
-    bodyOsc.frequency.setValueAtTime(fundamental, time);
-    bodyOsc.frequency.exponentialRampToValueAtTime(fundamental * 0.72, time + 0.032);
-
-    const bodyGain = this.audioCtx.createGain();
-    bodyGain.gain.setValueAtTime(baseGain * 0.85, time);
-    bodyGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.035);
-
-    bodyOsc.connect(bodyGain);
-    bodyGain.connect(hitGain);
-
-    bodyOsc.start(time);
-    bodyOsc.stop(time + 0.038);
-  }
-
-  /**
    * Schedule count-in beat and queue up visual animation
    */
   scheduleCountIn(countNumber, totalCount, time) {
-    this.playStickClick(time, countNumber, totalCount);
+    const isBeatOne = (countNumber === 1);
+    const isAccent = (countNumber === totalCount);
+    this.playClick(time, isBeatOne, isAccent);
 
     if (this.onCountInBeat) {
       const delayMs = Math.max(0, (time - this.audioCtx.currentTime) * 1000);
