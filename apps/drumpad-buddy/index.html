@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="icons/icon-192.png">
   <link rel="manifest" href="manifest.json">
   <title>DrumPad Buddy - Drum Practice Pad Helper & Metronome</title>
-  <link rel="stylesheet" href="css/styles.css?v=7">
+  <link rel="stylesheet" href="css/styles.css?v=8">
 </head>
 <body>
 
@@ -96,7 +96,15 @@
           <div class="pulse-dot" id="pulseDot"></div>
           <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-subtle);">BEAT ENGINE</span>
         </div>
+      </div>
 
+      <!-- Notes Grid (Measure & Beat Groups) -->
+      <div class="pattern-display-container" id="patternContainer">
+        <!-- Rendered dynamically via JS -->
+      </div>
+
+      <!-- Beat Engine Footer: Hand Agenda Stacked Vertically -->
+      <div class="stage-footer">
         <div class="hand-legend">
           <div class="legend-item">
             <div class="legend-dot-r"></div>
@@ -107,15 +115,10 @@
             <span>Left Hand (L)</span>
           </div>
           <div class="legend-item" style="color: var(--accent-gold);">
-            <span style="font-weight: 900;">&gt;</span>
+            <span style="font-weight: 900; font-size: 0.95rem; line-height: 1;">&gt;</span>
             <span>Accent</span>
           </div>
         </div>
-      </div>
-
-      <!-- Notes Grid (Measure & Beat Groups) -->
-      <div class="pattern-display-container" id="patternContainer">
-        <!-- Rendered dynamically via JS -->
       </div>
     </main>
 

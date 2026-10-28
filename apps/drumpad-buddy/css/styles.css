@@ -353,17 +353,29 @@ body {
   box-shadow: 0 0 10px var(--right-hand-glow);
 }
 
+/* Beat Engine Footer Agenda */
+.stage-footer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
 .hand-legend {
   display: flex;
-  gap: 1rem;
-  font-size: 0.8rem;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.78rem;
   font-weight: 600;
+  color: var(--text-muted);
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
 }
 
 .legend-dot-r {
@@ -1403,9 +1415,8 @@ body {
     padding-bottom: 0.3rem;
   }
 
-  .hand-legend {
-    font-size: 0.75rem;
-    gap: 0.6rem;
+  .stage-footer {
+    display: none; /* Collapse agenda in landscape to maximize note stand height */
   }
 
   .measure-row {
