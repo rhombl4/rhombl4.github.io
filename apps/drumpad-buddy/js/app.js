@@ -44,6 +44,8 @@ class DrumPadApp {
       comboExitBtn: document.getElementById('comboExitBtn'),
 
       // Stage / Pattern
+      stageCard: document.getElementById('stageCard'),
+      stageTapBadge: document.getElementById('stageTapBadge'),
       patternContainer: document.getElementById('patternContainer'),
       pulseDot: document.getElementById('pulseDot'),
 
@@ -73,6 +75,10 @@ class DrumPadApp {
       playPauseBtn: document.getElementById('playPauseBtn'),
       playIcon: document.getElementById('playIcon'),
       playText: document.getElementById('playText'),
+      floatingControls: document.getElementById('floatingControls'),
+      floatingPlayBtn: document.getElementById('floatingPlayBtn'),
+      floatingPlayIcon: document.getElementById('floatingPlayIcon'),
+      floatingPlayLabel: document.getElementById('floatingPlayLabel'),
 
       // Modals & Install
       guideModal: document.getElementById('guideModal'),
@@ -218,8 +224,19 @@ class DrumPadApp {
     const currentCard = document.getElementById(`note-${noteIndex}`);
     if (currentCard) {
       currentCard.classList.add('is-active');
-      // Ensure active card is visible if scrollable
-      currentCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+
+      // Auto-scroll patternContainer horizontally ONLY if it overflows horizontally
+      // CRUCIAL FIX: Never use window scrollIntoView which steals mobile viewport scroll!
+      if (this.dom.patternContainer.scrollWidth > this.dom.patternContainer.clientWidth) {
+        const containerRect = this.dom.patternContainer.getBoundingClientRect();
+        const cardRect = currentCard.getBoundingClientRect();
+
+        if (cardRect.right > containerRect.right - 16) {
+          this.dom.patternContainer.scrollLeft += (cardRect.right - containerRect.right + 36);
+        } else if (cardRect.left < containerRect.left + 16) {
+          this.dom.patternContainer.scrollLeft -= (containerRect.left - cardRect.left + 36);
+        }
+      }
     }
 
     // Pulse Top Indicator
@@ -280,12 +297,34 @@ class DrumPadApp {
       this.dom.playPauseBtn.classList.add('is-playing');
       this.dom.playIcon.textContent = '⏸';
       this.dom.playText.textContent = 'PAUSE PRACTICE (SPACE)';
+      if (this.dom.floatingPlayBtn) {
+        this.dom.floatingPlayBtn.classList.add('is-playing');
+        this.dom.floatingPlayIcon.textContent = '⏸';
+        this.dom.floatingPlayLabel.textContent = 'PAUSE';
+      }
+      if (this.dom.stageTapBadge) {
+        this.dom.stageTapBadge.textContent = '⏸ Tap to Pause';
+      }
+      if (this.dom.stageCard) {
+        this.dom.stageCard.setAttribute('title', 'Tap anywhere on beats stage to Pause');
+      }
       if (this.dom.timerStartBtn) this.dom.timerStartBtn.classList.add('active');
       if (this.dom.timerPauseBtn) this.dom.timerPauseBtn.classList.remove('active');
     } else {
       this.dom.playPauseBtn.classList.remove('is-playing');
       this.dom.playIcon.textContent = '▶';
       this.dom.playText.textContent = 'START PRACTICE (SPACE)';
+      if (this.dom.floatingPlayBtn) {
+        this.dom.floatingPlayBtn.classList.remove('is-playing');
+        this.dom.floatingPlayIcon.textContent = '▶';
+        this.dom.floatingPlayLabel.textContent = 'START';
+      }
+      if (this.dom.stageTapBadge) {
+        this.dom.stageTapBadge.textContent = '👆 Tap to Start';
+      }
+      if (this.dom.stageCard) {
+        this.dom.stageCard.setAttribute('title', 'Tap anywhere on beats stage to Start');
+      }
       if (this.dom.timerStartBtn) this.dom.timerStartBtn.classList.remove('active');
       // Clear visual active highlight
       const activeCard = this.dom.patternContainer.querySelector('.note-card.is-active');
@@ -528,6 +567,32 @@ class DrumPadApp {
     }
   }
 
+  setupFloatingControls() {
+    if (!this.dom.floatingControls || !this.dom.playPauseBtn) return;
+
+    const setVisibility = (isOutOfView) => {
+      this.dom.floatingControls.classList.toggle('is-visible', isOutOfView);
+    };
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          setVisibility(!entry.isIntersecting);
+        });
+      }, {
+        root: null,
+        threshold: 0.15
+      });
+      observer.observe(this.dom.playPauseBtn);
+    } else {
+      window.addEventListener('scroll', () => {
+        const rect = this.dom.playPauseBtn.getBoundingClientRect();
+        const isOutOfView = (rect.top > window.innerHeight || rect.bottom < 0);
+        setVisibility(isOutOfView);
+      }, { passive: true });
+    }
+  }
+
   bindEvents() {
     // Re-acquire WakeLock on iOS when app becomes visible again while practicing
     document.addEventListener('visibilitychange', () => {
@@ -536,8 +601,65 @@ class DrumPadApp {
       }
     });
 
-    // Play/Pause Action
+    // Play/Pause Action from Main Button
     this.dom.playPauseBtn.addEventListener('click', () => this.togglePlay());
+
+    // Play/Pause Action from Floating Button
+    if (this.dom.floatingPlayBtn) {
+      this.dom.floatingPlayBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.togglePlay();
+      });
+    }
+
+    // Tap/Click on Interactive Beats Stage to Play/Pause
+    if (this.dom.stageCard) {
+      let touchStartX = 0;
+      let touchStartY = 0;
+      let isTouchDrag = false;
+      let lastTapTime = 0;
+
+      this.dom.stageCard.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+          isTouchDrag = false;
+        }
+      }, { passive: true });
+
+      this.dom.stageCard.addEventListener('touchmove', (e) => {
+        if (e.touches.length === 1) {
+          const dx = Math.abs(e.touches[0].clientX - touchStartX);
+          const dy = Math.abs(e.touches[0].clientY - touchStartY);
+          if (dx > 12 || dy > 12) {
+            isTouchDrag = true;
+          }
+        }
+      }, { passive: true });
+
+      this.dom.stageCard.addEventListener('touchend', (e) => {
+        if (!isTouchDrag) {
+          lastTapTime = Date.now();
+          this.togglePlay();
+        }
+      });
+
+      this.dom.stageCard.addEventListener('click', (e) => {
+        // Prevent duplicate execution from synthetic click following touchend
+        if (Date.now() - lastTapTime < 450) return;
+        this.togglePlay();
+      });
+
+      this.dom.stageCard.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          this.togglePlay();
+        }
+      });
+    }
+
+    // Setup IntersectionObserver for floating transport controls
+    this.setupFloatingControls();
 
     // Exercise Navigation
     this.dom.exerciseSelect.addEventListener('change', (e) => {

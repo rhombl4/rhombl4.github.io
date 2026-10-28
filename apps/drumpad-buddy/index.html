@@ -11,7 +11,7 @@
   <link rel="icon" type="image/png" href="icons/icon-192.png">
   <link rel="manifest" href="manifest.json">
   <title>DrumPad Buddy - Drum Practice Pad Helper & Metronome</title>
-  <link rel="stylesheet" href="css/styles.css?v=5">
+  <link rel="stylesheet" href="css/styles.css?v=6">
 </head>
 <body>
 
@@ -90,11 +90,12 @@
     </section>
 
     <!-- Interactive Sticking Visualizer (The Hero Stage) -->
-    <main class="stage-card">
+    <main class="stage-card" id="stageCard" title="Tap anywhere on beats stage to Start / Pause" aria-label="Interactive beats stage, tap to toggle practice">
       <div class="stage-header">
         <div class="beat-pulse-indicator" id="pulseIndicator">
           <div class="pulse-dot" id="pulseDot"></div>
           <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-subtle);">BEAT ENGINE</span>
+          <span class="stage-tap-badge" id="stageTapBadge">👆 Tap to Start</span>
         </div>
 
         <div class="hand-legend">
@@ -381,6 +382,14 @@
       </div>
     </div>
   </div>
+
+  <!-- Floating Play / Pause Action Pill (Appears when Main Controls are Scrolled Out of View) -->
+  <aside class="floating-controls" id="floatingControls" aria-label="Quick Transport Controls">
+    <button class="floating-play-btn" id="floatingPlayBtn" aria-label="Toggle Play/Pause">
+      <span class="floating-play-icon" id="floatingPlayIcon">▶</span>
+      <span class="floating-play-label" id="floatingPlayLabel">START</span>
+    </button>
+  </aside>
 
   <!-- JavaScript Modules -->
   <script type="module" src="js/app.js"></script>

@@ -303,6 +303,41 @@ body {
   box-shadow: var(--shadow-card);
   position: relative;
   overflow: hidden;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.08s ease;
+}
+
+.stage-card:hover {
+  border-color: rgba(56, 189, 248, 0.45);
+}
+
+.stage-card:active {
+  transform: scale(0.997);
+}
+
+.stage-tap-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-full);
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  color: #38bdf8;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.stage-card:hover .stage-tap-badge {
+  background: rgba(14, 165, 233, 0.22);
+  border-color: var(--right-hand);
 }
 
 .stage-header {
@@ -808,6 +843,76 @@ body {
 .play-pause-btn.is-playing {
   background: linear-gradient(135deg, #e11d48, #f43f5e);
   box-shadow: 0 10px 20px -5px rgba(244, 63, 94, 0.4);
+}
+
+/* --- Floating Mobile/Stand Transport Pill --- */
+.floating-controls {
+  position: fixed;
+  bottom: max(1.25rem, calc(0.75rem + env(safe-area-inset-bottom, 0px)));
+  left: 50%;
+  transform: translateX(-50%) translateY(110px);
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: calc(100vw - 2rem);
+}
+
+.floating-controls.is-visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.floating-play-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  height: 52px;
+  padding: 0 1.75rem;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65), 0 0 22px rgba(16, 185, 129, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  white-space: nowrap;
+  touch-action: manipulation;
+  transition: transform 0.12s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.floating-play-btn:hover {
+  transform: scale(1.03);
+}
+
+.floating-play-btn:active {
+  transform: scale(0.96);
+}
+
+.floating-play-btn.is-playing {
+  background: linear-gradient(135deg, #e11d48, #f43f5e);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65), 0 0 22px rgba(244, 63, 94, 0.5);
+}
+
+.floating-play-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.floating-play-label {
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .btn-secondary {
@@ -1412,6 +1517,20 @@ body {
   .play-pause-btn {
     height: 48px;
     font-size: 1.1rem;
+  }
+
+  .stage-tap-badge {
+    display: none; /* Hide tap badge in landscape to keep screen clean */
+  }
+
+  .floating-controls {
+    bottom: max(0.5rem, calc(0.25rem + env(safe-area-inset-bottom, 0px)));
+  }
+
+  .floating-play-btn {
+    height: 40px;
+    padding: 0 1.25rem;
+    font-size: 0.9rem;
   }
 
   .footer-shortcuts {
