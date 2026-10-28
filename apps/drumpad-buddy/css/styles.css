@@ -770,6 +770,197 @@ body {
   cursor: pointer;
 }
 
+/* --- Stick Click Intro Controls --- */
+.intro-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.65rem;
+  background: var(--bg-control);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.intro-toggle-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-main);
+  border-color: var(--accent-gold);
+}
+
+.intro-toggle-btn.active {
+  background: rgba(251, 191, 36, 0.15);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+}
+
+.intro-setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.5rem;
+  margin-top: 0.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.intro-checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.intro-checkbox-label input[type="checkbox"] {
+  display: none;
+}
+
+.custom-switch {
+  width: 36px;
+  height: 20px;
+  background: #334155;
+  border-radius: 9999px;
+  position: relative;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.custom-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.intro-checkbox-label input[type="checkbox"]:checked + .custom-switch {
+  background: var(--accent-gold);
+}
+
+.intro-checkbox-label input[type="checkbox"]:checked + .custom-switch::after {
+  transform: translateX(16px);
+}
+
+.intro-checkbox-label:hover .intro-checkbox-text {
+  color: var(--text-main);
+}
+
+/* --- Stick Click Count-In Overlay (Beat Engine Stage) --- */
+.count-in-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 15, 29, 0.88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 25;
+  animation: fadeIn 0.15s ease-out;
+  pointer-events: none;
+}
+
+.count-in-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+.count-in-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(251, 191, 36, 0.15);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: var(--radius-full);
+  color: var(--accent-gold);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.count-in-number {
+  font-size: 4.75rem;
+  font-weight: 900;
+  line-height: 1;
+  color: #ffffff;
+  text-shadow: 0 0 25px rgba(251, 191, 36, 0.7), 0 0 50px rgba(251, 191, 36, 0.3);
+  font-variant-numeric: tabular-nums;
+  transform: scale(1);
+}
+
+.count-in-number.pop {
+  animation: countPop 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes countPop {
+  0% {
+    transform: scale(0.65);
+    opacity: 0.6;
+  }
+  60% {
+    transform: scale(1.22);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.count-in-dots {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.count-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #334155;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.12s ease;
+}
+
+.count-dot.active {
+  background: var(--accent-gold);
+  border-color: #fef08a;
+  transform: scale(1.25);
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.8);
+}
+
+.count-in-hint {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
 /* Practice Timer Section */
 .timer-display-wrap {
   text-align: center;
@@ -1414,6 +1605,15 @@ body {
   .stage-timer-badge {
     padding: 0.2rem 0.55rem;
     font-size: 0.85rem;
+  }
+
+  .count-in-number {
+    font-size: 3rem;
+  }
+
+  .count-in-box {
+    gap: 0.25rem;
+    padding: 0.5rem;
   }
 
   .stage-footer {

@@ -28,6 +28,13 @@ export class AudioEngine {
     // Callback when a note is rendered visually
     this.onNoteTrigger = null; 
     this.onBeatOne = null;
+    this.onCountInBeat = null;
+    this.onCountInEnd = null;
+
+    // Count-in intro state
+    this.isCountingIn = false;
+    this.countInBeatsTotal = 0;
+    this.currentCountInBeat = 0;
 
     // iOS AudioContext unlock and visibility resume handlers
     this.setupIOSAudioLifecycle();
@@ -469,6 +476,12 @@ export class AudioEngine {
         break;
       }
 
+      case 'stickClick': {
+        // 13. Drummer Stick Click (Hickory stick on stick impact)
+        this.playStickClick(time, isBeatOne ? 1 : 2, 4);
+        break;
+      }
+
       case 'click':
       default: {
         // 3. Digital Studio Beep (Pro DAW Click)
@@ -486,6 +499,85 @@ export class AudioEngine {
         osc.stop(time + 0.03);
         break;
       }
+    }
+  }
+
+  /**
+   * Synthesize an authentic acoustic drumstick-on-drumstick count-in click
+   * Combines high-Q wood collision noise snap + hollow cylindrical wood body resonance
+   */
+  playStickClick(time, countNumber = 1, totalCount = 4) {
+    if (this.isMuted || !this.audioCtx) return;
+
+    const baseGain = this.volume;
+    const isFinalCount = (countNumber === totalCount);
+    const isDownbeat = (countNumber === 1);
+
+    // Master hit gain
+    const hitGain = this.audioCtx.createGain();
+    hitGain.connect(this.audioCtx.destination);
+
+    const maxGain = isFinalCount ? baseGain * 0.95 : (isDownbeat ? baseGain * 0.85 : baseGain * 0.72);
+    hitGain.gain.setValueAtTime(maxGain, time);
+    hitGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.045);
+
+    // 1. High transient impact noise (wood friction and collision transient)
+    const noiseBuffer = this.getNoiseBuffer(0.025);
+    if (noiseBuffer) {
+      const noise = this.audioCtx.createBufferSource();
+      noise.buffer = noiseBuffer;
+
+      const noiseFilter = this.audioCtx.createBiquadFilter();
+      noiseFilter.type = 'bandpass';
+      noiseFilter.frequency.setValueAtTime(isFinalCount ? 3300 : 2800, time);
+      noiseFilter.Q.setValueAtTime(4.5, time);
+
+      const noiseGain = this.audioCtx.createGain();
+      noiseGain.gain.setValueAtTime(baseGain * 0.75, time);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.016);
+
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(hitGain);
+
+      noise.start(time);
+      noise.stop(time + 0.02);
+    }
+
+    // 2. Stick body fundamental tone (hickory stick pitch)
+    const bodyOsc = this.audioCtx.createOscillator();
+    bodyOsc.type = 'triangle';
+    const fundamental = isFinalCount ? 1220 : (isDownbeat ? 1040 : 920);
+    bodyOsc.frequency.setValueAtTime(fundamental, time);
+    bodyOsc.frequency.exponentialRampToValueAtTime(fundamental * 0.72, time + 0.032);
+
+    const bodyGain = this.audioCtx.createGain();
+    bodyGain.gain.setValueAtTime(baseGain * 0.85, time);
+    bodyGain.gain.exponentialRampToValueAtTime(0.0001, time + 0.035);
+
+    bodyOsc.connect(bodyGain);
+    bodyGain.connect(hitGain);
+
+    bodyOsc.start(time);
+    bodyOsc.stop(time + 0.038);
+  }
+
+  /**
+   * Schedule count-in beat and queue up visual animation
+   */
+  scheduleCountIn(countNumber, totalCount, time) {
+    this.playStickClick(time, countNumber, totalCount);
+
+    if (this.onCountInBeat) {
+      const delayMs = Math.max(0, (time - this.audioCtx.currentTime) * 1000);
+      setTimeout(() => {
+        if (this.isPlaying && this.isCountingIn && this.onCountInBeat) {
+          this.onCountInBeat({
+            count: countNumber,
+            total: totalCount
+          });
+        }
+      }, delayMs);
     }
   }
 
@@ -563,12 +655,35 @@ export class AudioEngine {
   scheduler() {
     // While there are notes that will need to play before the next interval
     while (this.nextNoteTime < this.audioCtx.currentTime + this.scheduleAheadTime) {
-      this.scheduleNote(this.currentNoteIndex, this.nextNoteTime);
-      this.nextNote();
+      if (this.isCountingIn) {
+        this.currentCountInBeat++;
+        this.scheduleCountIn(this.currentCountInBeat, this.countInBeatsTotal, this.nextNoteTime);
+
+        const secondsPerBeat = 60.0 / this.bpm;
+        const countEndTime = this.nextNoteTime + secondsPerBeat;
+        this.nextNoteTime = countEndTime;
+
+        if (this.currentCountInBeat >= this.countInBeatsTotal) {
+          // Count-in finished! Next note will be note 0 of the exercise
+          this.isCountingIn = false;
+          this.currentNoteIndex = 0;
+          if (this.onCountInEnd) {
+            const endDelayMs = Math.max(0, (countEndTime - this.audioCtx.currentTime) * 1000);
+            setTimeout(() => {
+              if (this.isPlaying && !this.isCountingIn && this.onCountInEnd) {
+                this.onCountInEnd();
+              }
+            }, endDelayMs);
+          }
+        }
+      } else {
+        this.scheduleNote(this.currentNoteIndex, this.nextNoteTime);
+        this.nextNote();
+      }
     }
   }
 
-  async start() {
+  async start(countInBeats = 0) {
     if (this.isPlaying) return;
     this.isPlaying = true;
     await this.ensureAudioContext();
@@ -576,6 +691,16 @@ export class AudioEngine {
 
     this.currentNoteIndex = 0;
     this.nextNoteTime = this.audioCtx.currentTime + 0.05; // tiny lead-in
+
+    if (countInBeats > 0) {
+      this.isCountingIn = true;
+      this.countInBeatsTotal = countInBeats;
+      this.currentCountInBeat = 0;
+    } else {
+      this.isCountingIn = false;
+      this.countInBeatsTotal = 0;
+      this.currentCountInBeat = 0;
+    }
 
     if (this.timerId) {
       clearInterval(this.timerId);
@@ -585,10 +710,16 @@ export class AudioEngine {
 
   stop() {
     if (!this.isPlaying) return;
+    const wasCountingIn = this.isCountingIn;
     this.isPlaying = false;
+    this.isCountingIn = false;
+    this.currentCountInBeat = 0;
     if (this.timerId) {
       clearInterval(this.timerId);
       this.timerId = null;
+    }
+    if (wasCountingIn && this.onCountInEnd) {
+      this.onCountInEnd({ cancelled: true });
     }
   }
 

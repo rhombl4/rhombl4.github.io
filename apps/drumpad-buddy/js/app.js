@@ -50,6 +50,10 @@ class DrumPadApp {
       stageTimerBadge: document.getElementById('stageTimerBadge'),
       stageTimerDisplay: document.getElementById('stageTimerDisplay'),
       stageTimerIcon: document.getElementById('stageTimerIcon'),
+      countInOverlay: document.getElementById('countInOverlay'),
+      countInNumber: document.getElementById('countInNumber'),
+      countInDots: document.getElementById('countInDots'),
+      countInHint: document.getElementById('countInHint'),
 
       // Metronome Controls
       bpmValue: document.getElementById('bpmValue'),
@@ -61,6 +65,8 @@ class DrumPadApp {
       tapTempoBtn: document.getElementById('tapTempoBtn'),
       soundSelect: document.getElementById('soundSelect'),
       muteBtn: document.getElementById('muteBtn'),
+      countInToggleBtn: document.getElementById('countInToggleBtn'),
+      countInCheckbox: document.getElementById('countInCheckbox'),
 
       // Timer Controls
       timerDisplay: document.getElementById('timerDisplay'),
@@ -103,17 +109,33 @@ class DrumPadApp {
   }
 
   init() {
+    this.countInEnabled = localStorage.getItem('drumpad_stick_intro_enabled') !== 'false';
     this.populateExerciseSelect();
     this.renderCurriculumModal();
     this.renderCuratedCombos();
     this.renderCustomComboBuilder();
     this.loadExercise(0);
     this.updateStatsUI();
+    this.updateCountInUI();
     this.bindEvents();
 
     // Setup audio callback for synchronized visual triggers
     this.audio.onNoteTrigger = ({ noteIndex, note, isBeatOne }) => {
       this.highlightNote(noteIndex, isBeatOne);
+    };
+
+    // Setup stick click count-in intro callbacks
+    this.audio.onCountInBeat = ({ count, total }) => {
+      this.showCountIn(count, total);
+    };
+
+    this.audio.onCountInEnd = (info) => {
+      this.hideCountIn();
+      if (!info || !info.cancelled) {
+        if (this.audio.isPlaying) {
+          this.timer.start();
+        }
+      }
     };
 
     // Setup audio loop callback for seamless combo progression
@@ -284,12 +306,81 @@ class DrumPadApp {
       this.timer.pause();
       this.releaseWakeLock();
       this.updatePlayState(false);
+      this.hideCountIn();
     } else {
       this.updatePlayState(true);
-      this.timer.start();
       this.requestWakeLock();
       this.scrollToBeatEngine();
-      await this.audio.start();
+
+      const currentEx = EXERCISES[this.currentExerciseIndex];
+      const countInBeats = this.countInEnabled 
+        ? ((currentEx && currentEx.timeSignature) ? currentEx.timeSignature[0] : 4)
+        : 0;
+
+      if (countInBeats > 0) {
+        this.setupCountInDots(countInBeats);
+        this.showCountIn(1, countInBeats);
+      } else {
+        this.timer.start();
+      }
+
+      await this.audio.start(countInBeats);
+    }
+  }
+
+  toggleCountIn(forceVal = null) {
+    this.countInEnabled = forceVal !== null ? forceVal : !this.countInEnabled;
+    localStorage.setItem('drumpad_stick_intro_enabled', this.countInEnabled ? 'true' : 'false');
+    this.updateCountInUI();
+  }
+
+  updateCountInUI() {
+    if (this.dom.countInToggleBtn) {
+      this.dom.countInToggleBtn.classList.toggle('active', this.countInEnabled);
+      this.dom.countInToggleBtn.title = `Stick Click Intro: ${this.countInEnabled ? 'ON (1 bar lead-in)' : 'OFF (instant start)'}`;
+    }
+    if (this.dom.countInCheckbox) {
+      this.dom.countInCheckbox.checked = this.countInEnabled;
+    }
+  }
+
+  setupCountInDots(total) {
+    if (!this.dom.countInDots) return;
+    this.dom.countInDots.innerHTML = '';
+    for (let i = 1; i <= total; i++) {
+      const dot = document.createElement('span');
+      dot.className = 'count-dot';
+      dot.dataset.dot = i;
+      this.dom.countInDots.appendChild(dot);
+    }
+  }
+
+  showCountIn(count, total) {
+    if (!this.dom.countInOverlay) return;
+    this.dom.countInOverlay.style.display = 'flex';
+    if (this.dom.countInNumber) {
+      this.dom.countInNumber.textContent = count;
+      this.dom.countInNumber.classList.remove('pop');
+      void this.dom.countInNumber.offsetWidth; // Force reflow to replay pop keyframe
+      this.dom.countInNumber.classList.add('pop');
+    }
+    if (this.dom.countInDots) {
+      const dots = this.dom.countInDots.querySelectorAll('.count-dot');
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx < count);
+      });
+    }
+    if (this.dom.countInHint) {
+      this.dom.countInHint.textContent = count === total ? 'Ready... PLAY!' : 'Sync tempo...';
+    }
+    if (this.dom.pulseDot) {
+      this.dom.pulseDot.className = count === total ? 'pulse-dot pulse-downbeat' : 'pulse-dot pulse-sub';
+    }
+  }
+
+  hideCountIn() {
+    if (this.dom.countInOverlay) {
+      this.dom.countInOverlay.style.display = 'none';
     }
   }
 
@@ -668,6 +759,19 @@ class DrumPadApp {
       this.dom.muteBtn.classList.toggle('active', isMuted);
     });
 
+    // Stick Click Intro Toggle Controls
+    if (this.dom.countInToggleBtn) {
+      this.dom.countInToggleBtn.addEventListener('click', () => {
+        this.toggleCountIn();
+      });
+    }
+
+    if (this.dom.countInCheckbox) {
+      this.dom.countInCheckbox.addEventListener('change', (e) => {
+        this.toggleCountIn(e.target.checked);
+      });
+    }
+
     // Timer Presets
     const presetBtns = this.dom.timerPresets.querySelectorAll('.preset-btn');
     presetBtns.forEach(btn => {
@@ -687,12 +791,10 @@ class DrumPadApp {
 
     // Classic Timer Transport Controls (▶ Arrow, ⏸ Two Poles, ⏹ Square, ↺ Reset)
     if (this.dom.timerStartBtn) {
-      this.dom.timerStartBtn.addEventListener('click', async () => {
-        this.timer.start();
-        this.updatePlayState(true);
-        this.requestWakeLock();
-        this.scrollToBeatEngine();
-        await this.audio.start();
+      this.dom.timerStartBtn.addEventListener('click', () => {
+        if (!this.audio.isPlaying) {
+          this.togglePlay();
+        }
       });
     }
 
@@ -885,6 +987,10 @@ class DrumPadApp {
         case 'KeyM':
           e.preventDefault();
           this.dom.muteBtn.click();
+          break;
+        case 'KeyI':
+          e.preventDefault();
+          this.toggleCountIn();
           break;
         case 'KeyC':
           e.preventDefault();
