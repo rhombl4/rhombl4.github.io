@@ -444,6 +444,107 @@ body {
   box-shadow: 0 0 6px var(--left-hand-glow);
 }
 
+/* Next Beat Section Preview Strip */
+.next-beat-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+  border-radius: var(--radius-md);
+  padding: 0.35rem 0.75rem;
+  margin-bottom: 0.6rem;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: all 0.2s ease;
+}
+
+.next-preview-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.next-preview-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-full);
+  background: rgba(251, 191, 36, 0.18);
+  color: var(--accent-gold);
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.next-preview-name {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #f8fafc;
+  letter-spacing: 0.02em;
+}
+
+.next-preview-cards {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding: 0.1rem 0;
+}
+
+.next-mini-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 32px;
+  height: 42px;
+  padding: 0.2rem 0.25rem;
+  background: var(--bg-control);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  position: relative;
+  transition: all 0.12s ease;
+  user-select: none;
+}
+
+.next-mini-card .mini-sub {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-subtle);
+  line-height: 1;
+}
+
+.next-mini-card .mini-hand {
+  font-size: 1.05rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.next-mini-card.note-hand-r .mini-hand {
+  color: var(--right-hand);
+}
+
+.next-mini-card.note-hand-l .mini-hand {
+  color: var(--left-hand);
+}
+
+.next-mini-card.has-accent {
+  border-color: rgba(251, 191, 36, 0.55);
+}
+
+.next-mini-card .mini-accent {
+  font-size: 0.75rem;
+  font-weight: 900;
+  line-height: 0.7;
+  color: var(--accent-gold);
+}
+
 /* Pattern Grid */
 .pattern-display-container {
   overflow-x: auto;
@@ -463,11 +564,79 @@ body {
 
 .beat-group {
   display: flex;
+  flex-direction: column;
   gap: 0.35rem;
   background: rgba(10, 15, 29, 0.5);
   padding: 0.4rem;
   border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.15s ease;
+}
+
+.beat-group.is-current-beat {
+  border-color: rgba(56, 189, 248, 0.45);
+  background: rgba(56, 189, 248, 0.06);
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.15);
+}
+
+.beat-group.is-next-beat {
+  border-color: rgba(251, 191, 36, 0.45);
+  background: rgba(251, 191, 36, 0.06);
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.12);
+}
+
+.beat-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.1rem 0.2rem 0.25rem 0.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  user-select: none;
+}
+
+.beat-group-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--text-subtle);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.beat-group.is-current-beat .beat-group-title {
+  color: #38bdf8;
+}
+
+.beat-group.is-next-beat .beat-group-title {
+  color: var(--accent-gold);
+}
+
+.beat-status-badge {
+  font-size: 0.6rem;
+  font-weight: 900;
+  padding: 0.1rem 0.35rem;
+  border-radius: var(--radius-full);
+  line-height: 1;
+  display: none;
+  letter-spacing: 0.04em;
+}
+
+.beat-status-badge.current {
+  display: inline-block;
+  background: rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.5);
+}
+
+.beat-status-badge.upcoming {
+  display: inline-block;
+  background: rgba(251, 191, 36, 0.2);
+  color: var(--accent-gold);
+  border: 1px solid rgba(251, 191, 36, 0.5);
+}
+
+.beat-group-notes {
+  display: flex;
+  gap: 0.35rem;
 }
 
 /* Note Card */
@@ -536,6 +705,14 @@ body {
 .note-card.has-accent .note-accent-badge {
   color: var(--accent-gold);
   text-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+}
+
+/* Next Note Anticipatory Highlight */
+.note-card.is-next {
+  border-color: rgba(251, 191, 36, 0.65);
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
+  transform: translateY(-3px);
+  z-index: 5;
 }
 
 /* Active Highlight Animation */
@@ -1551,6 +1728,37 @@ body {
   .stage-timer-badge {
     padding: 0.2rem 0.55rem;
     font-size: 0.85rem;
+  }
+
+  .next-beat-preview {
+    padding: 0.2rem 0.5rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .next-mini-card {
+    min-width: 28px;
+    height: 36px;
+    padding: 0.1rem 0.2rem;
+  }
+
+  .next-mini-card .mini-hand {
+    font-size: 0.92rem;
+  }
+
+  .next-preview-name {
+    font-size: 0.75rem;
+  }
+
+  .beat-group-notes {
+    gap: 0.25rem;
+  }
+
+  .beat-group-header {
+    padding: 0 0.1rem 0.15rem 0.1rem;
+  }
+
+  .beat-group-title {
+    font-size: 0.6rem;
   }
 
   .stage-footer {

@@ -46,6 +46,9 @@ class DrumPadApp {
       // Stage / Pattern
       stageCard: document.getElementById('stageCard'),
       patternContainer: document.getElementById('patternContainer'),
+      nextBeatPreview: document.getElementById('nextBeatPreview'),
+      nextPreviewName: document.getElementById('nextPreviewName'),
+      nextPreviewCards: document.getElementById('nextPreviewCards'),
       pulseDot: document.getElementById('pulseDot'),
       stageTimerBadge: document.getElementById('stageTimerBadge'),
       stageTimerDisplay: document.getElementById('stageTimerDisplay'),
@@ -220,16 +223,39 @@ class DrumPadApp {
 
     const notesPerBeat = ex.notesPerBeat;
     const totalNotes = ex.pattern.length;
+    const totalBeats = Math.ceil(totalNotes / notesPerBeat);
     
     // Group notes into beats (measure layout)
     let currentBeatGroup = null;
+    let currentNotesContainer = null;
     let measureRow = document.createElement('div');
     measureRow.className = 'measure-row';
 
     ex.pattern.forEach((note, idx) => {
+      const beatIndex = Math.floor(idx / notesPerBeat);
       if (idx % notesPerBeat === 0) {
         currentBeatGroup = document.createElement('div');
         currentBeatGroup.className = 'beat-group';
+        currentBeatGroup.id = `beat-group-${beatIndex}`;
+        currentBeatGroup.dataset.beatIndex = beatIndex;
+
+        const groupHeader = document.createElement('div');
+        groupHeader.className = 'beat-group-header';
+
+        const beatNum = (beatIndex % 4) + 1;
+        const measureNum = Math.floor(beatIndex / 4) + 1;
+        const labelText = totalBeats > 4 ? `M${measureNum} B${beatNum}` : `BEAT ${beatNum}`;
+
+        groupHeader.innerHTML = `
+          <span class="beat-group-title">${labelText}</span>
+          <span class="beat-status-badge" id="beat-badge-${beatIndex}"></span>
+        `;
+        currentBeatGroup.appendChild(groupHeader);
+
+        currentNotesContainer = document.createElement('div');
+        currentNotesContainer.className = 'beat-group-notes';
+        currentBeatGroup.appendChild(currentNotesContainer);
+
         measureRow.appendChild(currentBeatGroup);
       }
 
@@ -245,17 +271,117 @@ class DrumPadApp {
         <span class="note-accent-badge">&gt;</span>
       `;
 
-      currentBeatGroup.appendChild(card);
+      currentNotesContainer.appendChild(card);
     });
 
     this.dom.patternContainer.appendChild(measureRow);
+
+    // Initial resting preview of the upcoming first beat section
+    this.updateNextBeatPreview(-1);
+  }
+
+  updateNextBeatPreview(currentBeatIndex) {
+    if (!this.audio.currentPattern || this.audio.currentPattern.length === 0) return;
+
+    const notesPerBeat = this.audio.notesPerBeat;
+    const totalNotes = this.audio.currentPattern.length;
+    const totalBeats = Math.ceil(totalNotes / notesPerBeat);
+
+    // If resting (currentBeatIndex < 0), preview Beat 1 as upcoming
+    const nextBeatIndex = currentBeatIndex < 0 ? 0 : ((currentBeatIndex + 1) % totalBeats);
+    const isLooping = (currentBeatIndex >= 0 && nextBeatIndex === 0);
+
+    let nextTitle = '';
+    let nextNotes = [];
+
+    // Check if in workout combo mode transitioning to next exercise
+    if (this.isComboMode && this.activeCombo && isLooping && (this.comboBarsPlayed + 1 >= this.activeCombo.barsPerExercise)) {
+      const nextStep = (this.comboStep + 1) % this.activeCombo.exerciseIds.length;
+      const nextId = this.activeCombo.exerciseIds[nextStep];
+      const nextEx = EXERCISES.find(e => e.id === nextId);
+      if (nextEx) {
+        nextTitle = `NEXT EX: #${nextEx.id} ${nextEx.name} (Beat 1)`;
+        nextNotes = nextEx.pattern.slice(0, nextEx.notesPerBeat);
+      }
+    }
+
+    if (!nextTitle) {
+      const beatNum = (nextBeatIndex % 4) + 1;
+      const measureNum = Math.floor(nextBeatIndex / 4) + 1;
+      const beatLabel = totalBeats > 4 ? `M${measureNum} Beat ${beatNum}` : `Beat ${beatNum}`;
+      nextTitle = isLooping ? `↻ ${beatLabel} (Repeat)` : `${beatLabel}`;
+      const startIdx = nextBeatIndex * notesPerBeat;
+      nextNotes = this.audio.currentPattern.slice(startIdx, startIdx + notesPerBeat);
+    }
+
+    if (this.dom.nextPreviewName) {
+      this.dom.nextPreviewName.textContent = nextTitle;
+    }
+    this.renderNextPreviewCards(nextNotes);
+    this.updateBeatGroupStates(currentBeatIndex, nextBeatIndex, isLooping);
+  }
+
+  renderNextPreviewCards(notes) {
+    if (!this.dom.nextPreviewCards) return;
+    this.dom.nextPreviewCards.innerHTML = '';
+
+    notes.forEach((note) => {
+      const pill = document.createElement('div');
+      pill.className = `next-mini-card note-hand-${note.hand.toLowerCase()} ${note.accent ? 'has-accent' : ''}`;
+      
+      const subLabel = note.beat || note.sub || '•';
+      pill.innerHTML = `
+        <span class="mini-sub">${subLabel}</span>
+        <span class="mini-hand">${note.hand}</span>
+        ${note.accent ? '<span class="mini-accent">&gt;</span>' : ''}
+      `;
+      this.dom.nextPreviewCards.appendChild(pill);
+    });
+  }
+
+  updateBeatGroupStates(currentBeatIndex, nextBeatIndex, isLooping) {
+    if (!this.audio.currentPattern) return;
+    const totalBeats = Math.ceil(this.audio.currentPattern.length / this.audio.notesPerBeat);
+    for (let i = 0; i < totalBeats; i++) {
+      const group = document.getElementById(`beat-group-${i}`);
+      const badge = document.getElementById(`beat-badge-${i}`);
+      if (!group) continue;
+
+      if (currentBeatIndex >= 0 && i === currentBeatIndex) {
+        group.classList.add('is-current-beat');
+        group.classList.remove('is-next-beat');
+        if (badge) {
+          badge.textContent = 'PLAY';
+          badge.className = 'beat-status-badge current';
+        }
+      } else if (i === nextBeatIndex) {
+        group.classList.remove('is-current-beat');
+        group.classList.add('is-next-beat');
+        if (badge) {
+          badge.textContent = currentBeatIndex < 0 ? 'START ▶' : (isLooping ? '↻ NEXT' : 'NEXT');
+          badge.className = 'beat-status-badge upcoming';
+        }
+      } else {
+        group.classList.remove('is-current-beat', 'is-next-beat');
+        if (badge) {
+          badge.textContent = '';
+          badge.className = 'beat-status-badge';
+        }
+      }
+    }
   }
 
   highlightNote(noteIndex, isBeatOne) {
-    // Un-highlight previous
+    // Un-highlight previous active note
     const prevActive = this.dom.patternContainer.querySelector('.note-card.is-active');
     if (prevActive) {
       prevActive.classList.remove('is-active');
+    }
+
+    // Un-highlight previous anticipatory next note
+    const prevNext = this.dom.patternContainer.querySelector('.note-card.is-next');
+    if (prevNext) {
+      prevNext.classList.remove('is-next');
     }
 
     // Highlight current note
@@ -276,6 +402,19 @@ class DrumPadApp {
         }
       }
     }
+
+    // Anticipatory highlight on the immediate next note
+    const totalNotes = this.audio.currentPattern.length;
+    const nextNoteIndex = (noteIndex + 1) % totalNotes;
+    const nextCard = document.getElementById(`note-${nextNoteIndex}`);
+    if (nextCard && nextCard !== currentCard) {
+      nextCard.classList.add('is-next');
+    }
+
+    // Update upcoming beat section preview
+    const notesPerBeat = this.audio.notesPerBeat;
+    const currentBeatIndex = Math.floor(noteIndex / notesPerBeat);
+    this.updateNextBeatPreview(currentBeatIndex);
 
     // Pulse Top Indicator
     this.dom.pulseDot.className = 'pulse-dot';
@@ -422,10 +561,15 @@ class DrumPadApp {
         this.dom.stageTimerBadge.classList.remove('is-running');
       }
       if (this.dom.timerStartBtn) this.dom.timerStartBtn.classList.remove('active');
-      // Clear visual active highlight
+      // Clear visual active and next note highlight
       const activeCard = this.dom.patternContainer.querySelector('.note-card.is-active');
       if (activeCard) activeCard.classList.remove('is-active');
+      const nextCard = this.dom.patternContainer.querySelector('.note-card.is-next');
+      if (nextCard) nextCard.classList.remove('is-next');
       this.dom.pulseDot.className = 'pulse-dot';
+
+      // Reset preview to initial Beat 1
+      this.updateNextBeatPreview(-1);
     }
   }
 
