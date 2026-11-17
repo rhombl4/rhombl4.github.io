@@ -150,11 +150,30 @@ class DrumPadApp {
     };
     this.timer.triggerTick();
 
+    this.timer.onReset = () => {
+      if (this.dom.stageTimerBadge) {
+        this.dom.stageTimerBadge.classList.remove('is-completed');
+      }
+      const wrap = this.dom.timerDisplay ? this.dom.timerDisplay.closest('.timer-display-wrap') : null;
+      if (wrap) {
+        wrap.classList.remove('is-completed');
+      }
+    };
+
     this.timer.onComplete = () => {
       this.audio.stop();
       this.updatePlayState(false);
       this.audio.playCelebrationChime();
       this.updateStatsUI();
+
+      if (this.dom.stageTimerBadge) {
+        this.dom.stageTimerBadge.classList.add('is-completed');
+      }
+      const wrap = this.dom.timerDisplay ? this.dom.timerDisplay.closest('.timer-display-wrap') : null;
+      if (wrap) {
+        wrap.classList.add('is-completed');
+      }
+
       // Record completed exercise best BPM
       const currentEx = EXERCISES[this.currentExerciseIndex];
       this.timer.recordExerciseBpm(currentEx.id, this.audio.bpm);
@@ -374,6 +393,13 @@ class DrumPadApp {
 
   updatePlayState(isPlaying) {
     if (isPlaying) {
+      if (this.dom.stageTimerBadge) {
+        this.dom.stageTimerBadge.classList.remove('is-completed');
+      }
+      const wrap = this.dom.timerDisplay ? this.dom.timerDisplay.closest('.timer-display-wrap') : null;
+      if (wrap) {
+        wrap.classList.remove('is-completed');
+      }
       this.dom.playPauseBtn.classList.add('is-playing');
       this.dom.playIcon.textContent = '⏸';
       this.dom.playText.textContent = 'PAUSE PRACTICE (SPACE)';

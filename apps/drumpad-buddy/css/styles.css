@@ -360,6 +360,20 @@ body {
   color: #ffffff;
 }
 
+.stage-timer-badge.is-completed {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+  color: #34d399;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+  animation: timerCompletePop 0.4s ease-in-out;
+}
+
+@keyframes timerCompletePop {
+  0% { transform: scale(0.95); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+
 .stage-timer-icon {
   font-size: 0.85rem;
   line-height: 1;
@@ -943,6 +957,15 @@ body {
   background: linear-gradient(90deg, var(--accent-pink), #f43f5e);
   width: 0%;
   transition: width 0.25s linear;
+}
+
+.timer-display-wrap.is-completed .timer-number {
+  color: #10b981;
+  text-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+}
+
+.timer-display-wrap.is-completed .timer-progress-fill {
+  background: linear-gradient(90deg, #10b981, #34d399);
 }
 
 .timer-presets {

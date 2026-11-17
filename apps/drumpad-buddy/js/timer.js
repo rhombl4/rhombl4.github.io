@@ -14,10 +14,12 @@ export class PracticeTimer {
     this.startTime = null;
     this.initialRemaining = 120;
     this.initialElapsed = 0;
+    this.autoResetTimeoutId = null;
 
     // Callbacks
     this.onTick = null;
     this.onComplete = null;
+    this.onReset = null;
 
     // Load persisted user stats
     this.loadStats();
@@ -35,6 +37,13 @@ export class PracticeTimer {
 
   start() {
     if (this.isRunning) return;
+    if (this.autoResetTimeoutId) {
+      clearTimeout(this.autoResetTimeoutId);
+      this.autoResetTimeoutId = null;
+    }
+    if (this.mode === 'countdown' && this.remainingSeconds <= 0) {
+      this.reset();
+    }
     this.isRunning = true;
     this.startTime = Date.now();
     this.initialRemaining = this.remainingSeconds;
@@ -74,17 +83,31 @@ export class PracticeTimer {
   }
 
   stop() {
+    if (this.autoResetTimeoutId) {
+      clearTimeout(this.autoResetTimeoutId);
+      this.autoResetTimeoutId = null;
+    }
     this.pause();
     this.remainingSeconds = this.targetSeconds;
     this.elapsedSeconds = 0;
     this.triggerTick();
+    if (this.onReset) {
+      this.onReset();
+    }
   }
 
   reset() {
+    if (this.autoResetTimeoutId) {
+      clearTimeout(this.autoResetTimeoutId);
+      this.autoResetTimeoutId = null;
+    }
     this.pause();
     this.remainingSeconds = this.targetSeconds;
     this.elapsedSeconds = 0;
     this.triggerTick();
+    if (this.onReset) {
+      this.onReset();
+    }
   }
 
   complete() {
@@ -93,6 +116,15 @@ export class PracticeTimer {
     if (this.onComplete) {
       this.onComplete();
     }
+
+    // Automatically reset timer back to initial duration after exercise completes
+    if (this.autoResetTimeoutId) {
+      clearTimeout(this.autoResetTimeoutId);
+    }
+    this.autoResetTimeoutId = setTimeout(() => {
+      this.autoResetTimeoutId = null;
+      this.reset();
+    }, 1000);
   }
 
   triggerTick() {
